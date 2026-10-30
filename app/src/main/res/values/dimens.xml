@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">14dp</dimen>
+    <dimen name="padding_large">18dp</dimen>
+    <dimen name="padding_screen">16dp</dimen>
+
+    <dimen name="corner_card">18dp</dimen>
+    <dimen name="corner_banner">20dp</dimen>
+    <dimen name="corner_button">18dp</dimen>
+    <dimen name="corner_small">10dp</dimen>
+    <dimen name="corner_icon_box">12dp</dimen>
+
+    <dimen name="banner_height">208dp</dimen>
+    <dimen name="play_bar_height">58dp</dimen>
+    <dimen name="icon_box_size">44dp</dimen>
+    <dimen name="avatar_size">28dp</dimen>
+    <dimen name="logo_size">40dp</dimen>
+</resources>

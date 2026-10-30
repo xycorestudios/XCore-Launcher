@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="xcore_bg">#070A08</color>
+    <color name="xcore_card">#0E1411</color>
+    <color name="xcore_card_border">#1D2A22</color>
+    <color name="xcore_accent">#2ECC57</color>
+    <color name="xcore_accent_deep">#1B8F3C</color>
+    <color name="xcore_accent_soft">#14301E</color>
+    <color name="xcore_text">#E9F2EC</color>
+    <color name="xcore_text_muted">#7E9186</color>
+    <color name="xcore_danger">#E5533C</color>
+
+    <!-- Status chips: an unmet capability is amber, a failure is red, a fact is muted. -->
+    <color name="xcore_chip_neutral">#16201B</color>
+    <color name="xcore_chip_warn">#241F13</color>
+    <color name="xcore_chip_error">#241413</color>
+
+    <color name="xcore_field_bg">#080D0A</color>
+    <color name="xcore_scrim_start">#F2050907</color>
+    <color name="xcore_scrim_mid">#A6050907</color>
+    <color name="xcore_scrim_end">#1A050907</color>
+</resources>

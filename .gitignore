@@ -1,0 +1,27 @@
+# Built artifacts
+*.iml
+.gradle/
+build/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+
+# IDE
+.idea/
+*.DS_Store
+
+# Signing material must never be committed
+*.jks
+*.keystore
+!debug.keystore
+keystore.properties
+signing.properties
+
+# Secrets and runtime provisioning inputs
+curseforge_key.txt
+*.env
+.env
+
+# Logs
+*.log

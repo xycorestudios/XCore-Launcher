@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">X-Core Launcher</string>
+    <string name="screen_title">Launcher foundation</string>
+    <string name="subtitle_home">Play • Explore • Create</string>
+    <string name="subtitle_settings">Settings</string>
+
+    <!-- Navigation -->
+    <string name="nav_instances">Instances</string>
+    <string name="nav_files">Files</string>
+    <string name="nav_settings">Settings</string>
+    <string name="action_play">Play</string>
+
+    <!-- Banner -->
+    <string name="tag_java_edition">Java Edition</string>
+    <string name="banner_title">Minecraft</string>
+    <string name="banner_sub1">The legendary sandbox game.</string>
+    <string name="banner_sub2">Now on X-Core Launcher.</string>
+
+    <!-- Instance -->
+    <string name="instance_title_default">Vanilla</string>
+    <string name="instance_version_default">1.21.4</string>
+    <string name="tag_java">Java</string>
+
+    <!-- Empty State -->
+    <string name="empty_instances_title">No other instances yet</string>
+    <string name="empty_instances_sub">Create a new one to get started.</string>
+
+    <!-- Settings Sections -->
+    <string name="setting_general_title">General</string>
+    <string name="setting_general_sub">App behaviour, language, updates</string>
+
+    <string name="setting_graphics_title">Graphics</string>
+    <string name="setting_graphics_sub">Renderer, performance, display</string>
+
+    <string name="setting_controls_title">Controls</string>
+    <string name="setting_controls_sub">Touch, keyboard, gamepad</string>
+
+    <string name="setting_storage_title">Storage</string>
+    <string name="setting_storage_sub">Game directory, cache, free space</string>
+
+    <string name="setting_account_title">Account</string>
+    <string name="setting_account_sub">Microsoft / Offline</string>
+
+    <string name="setting_security_title">Security</string>
+    <string name="setting_security_sub">Privacy, data, permissions</string>
+
+    <string name="setting_about_title">About</string>
+    <string name="setting_about_sub">Version, credits, legal</string>
+
+    <!-- Diagnostic & Engine -->
+    <string name="engine_new">Engine not started</string>
+    <string name="start_engine">Start engine</string>
+    <string name="shutdown_engine">Shut down</string>
+    <string name="refresh">Refresh</string>
+    <string name="no_layout">No storage layout has been prepared yet.</string>
+</resources>

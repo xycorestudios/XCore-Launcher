@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+    <!-- Left top to right bottom green stroke -->
+    <path
+        android:pathData="M8,8 L32,32"
+        android:strokeWidth="7"
+        android:strokeColor="#2ECC57"
+        android:strokeLineCap="round"/>
+    <!-- Right top to left bottom dark stroke -->
+    <path
+        android:pathData="M32,8 L8,32"
+        android:strokeWidth="7"
+        android:strokeColor="#1E3024"
+        android:strokeLineCap="round"/>
+    <!-- Center green overlap highlight -->
+    <path
+        android:pathData="M16,16 L24,24"
+        android:strokeWidth="7"
+        android:strokeColor="#2ECC57"
+        android:strokeLineCap="round"/>
+</vector>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/xcore_bg">
+
+    <!-- Header Bar -->
+    <include
+        android:id="@+id/layout_header"
+        layout="@layout/layout_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
+
+    <!-- Bottom Controls Area (Play button + Bottom nav) -->
+    <LinearLayout
+        android:id="@+id/container_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <!-- Bottom Navigation Bar -->
+        <include
+            android:id="@+id/layout_bottom_nav"
+            layout="@layout/layout_bottom_nav" />
+
+        <!-- Play Button -->
+        <include
+            android:id="@+id/layout_play_button"
+            layout="@layout/layout_play_button" />
+
+    </LinearLayout>
+
+    <!-- Fragment / Main Content Container -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/container_bottom"
+        android:layout_below="@id/layout_header">
+
+        <include layout="@layout/fragment_instances" />
+
+    </FrameLayout>
+
+</RelativeLayout>
