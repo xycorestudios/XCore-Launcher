@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Minecraft launcher greys, sampled from the desktop client: the rail is #1E1E1E, the pane
+      #282828, and every surface between them is a neutral step on that ramp.
+    -->
+    <color name="mc_rail">#1E1E1E</color>
+    <color name="mc_pane">#282828</color>
+    <color name="mc_panel">#323232</color>
+    <color name="mc_panel_raised">#3C3C3C</color>
+    <color name="mc_line">#4B4B4B</color>
+    <color name="mc_line_soft">#383838</color>
+    <color name="mc_white">#FFFFFF</color>
+    <color name="mc_dim">#ABABAB</color>
+    <color name="mc_dim_deep">#808080</color>
+    <color name="mc_field">#1E1E1E</color>
+    <color name="mc_row_hover">#303030</color>
+    <color name="mc_row_active">#3C3C3C</color>
+    <color name="mc_green">#46B04A</color>
+    <color name="mc_green_deep">#2F7D35</color>
+    <color name="mc_green_bright">#6FD973</color>
+    <color name="mc_green_soft">#1F3A23</color>
+    <color name="mc_amber">#E0A93C</color>
+    <color name="mc_red">#D9463C</color>
+
+    <!--
+      The PLAY block, sampled pixel-for-pixel off the desktop button: a black outline, a bright
+      top bevel, dark side and bottom bevels, and a near-flat body gradient between them.
+    -->
+    <color name="mc_play_outline">#000000</color>
+    <color name="mc_play_bevel_top">#27CE40</color>
+    <color name="mc_play_bevel_side">#0C6E3D</color>
+    <color name="mc_play_bevel_bottom">#064D2A</color>
+    <color name="mc_play_top">#009046</color>
+    <color name="mc_play_bottom">#008542</color>
+    <color name="mc_play_text_shadow">#00653E</color>
+    <color name="mc_play_top_pressed">#00733A</color>
+    <color name="mc_play_bottom_pressed">#006B36</color>
+    <color name="mc_play_bevel_top_pressed">#1BA833</color>
+    <color name="mc_play_bevel_bottom_pressed">#043A20</color>
+
+    <!-- The shell tokens every existing layout already reads, now pointed at the greys above. -->
+    <color name="xcore_bg">@color/mc_pane</color>
+    <color name="xcore_card">@color/mc_panel</color>
+    <color name="xcore_card_border">@color/mc_line_soft</color>
+    <color name="xcore_field_bg">@color/mc_field</color>
+    <color name="xcore_text">@color/mc_white</color>
+    <color name="xcore_text_muted">@color/mc_dim</color>
+    <color name="xcore_icon">@color/mc_dim</color>
+
+    <color name="xcore_accent">@color/mc_green</color>
+    <color name="xcore_accent_deep">@color/mc_green_deep</color>
+    <color name="xcore_accent_soft">@color/mc_green_soft</color>
+    <color name="xcore_accent_bright">@color/mc_green_bright</color>
+    <color name="xcore_accent_border">@color/mc_green_deep</color>
+
+    <!--
+      Per-screen hues. The launcher keeps one accent, so every screen resolves to the green
+      family; the indirection stays because the rows are painted from it at bind time.
+    -->
+    <color name="xcore_blue">@color/mc_green</color>
+    <color name="xcore_blue_deep">@color/mc_green_deep</color>
+    <color name="xcore_blue_bright">@color/mc_green_bright</color>
+    <color name="xcore_blue_soft">@color/mc_green_soft</color>
+
+    <color name="xcore_violet">@color/mc_green</color>
+    <color name="xcore_violet_deep">@color/mc_green_deep</color>
+    <color name="xcore_violet_bright">@color/mc_green_bright</color>
+    <color name="xcore_violet_soft">@color/mc_green_soft</color>
+
+    <color name="xcore_amber">@color/mc_amber</color>
+    <color name="xcore_amber_deep">#A87622</color>
+    <color name="xcore_amber_bright">#F0C46B</color>
+    <color name="xcore_amber_soft">#3A2E14</color>
+
+    <color name="xcore_teal">@color/mc_green</color>
+    <color name="xcore_teal_deep">@color/mc_green_deep</color>
+    <color name="xcore_teal_bright">@color/mc_green_bright</color>
+    <color name="xcore_teal_soft">@color/mc_green_soft</color>
+
+    <color name="xcore_orange">@color/mc_amber</color>
+    <color name="xcore_orange_deep">#A87622</color>
+    <color name="xcore_orange_bright">#F0C46B</color>
+    <color name="xcore_orange_soft">#3A2E14</color>
+
+    <color name="xcore_danger">@color/mc_red</color>
+    <color name="xcore_danger_soft">#3A1A18</color>
+
+    <!-- Status chips: an unmet capability is amber, a failure is red, a fact is muted. -->
+    <color name="xcore_chip_neutral">#383838</color>
+    <color name="xcore_chip_warn">@color/xcore_amber_soft</color>
+    <color name="xcore_chip_error">@color/xcore_danger_soft</color>
+
+    <color name="xcore_scrim_start">#F2141414</color>
+    <color name="xcore_scrim_mid">#A6141414</color>
+    <color name="xcore_scrim_end">#1A141414</color>
+
+    <!-- Home screen: surfaces sit on top of the wallpaper, so they carry their own alpha. -->
+    <color name="xcore_home_scrim_top">#B3141414</color>
+    <color name="xcore_home_scrim_mid">#4D141414</color>
+    <color name="xcore_home_scrim_bottom">#E6141414</color>
+    <color name="xcore_home_surface">#E61E1E1E</color>
+    <color name="xcore_home_surface_deep">#F21A1A1A</color>
+    <color name="xcore_home_border">@color/mc_line</color>
+
+    <!-- Switch states on the settings rows. -->
+    <color name="xcore_switch_off">#3C3C3C</color>
+    <color name="xcore_thumb_off">#A0A0A0</color>
+</resources>

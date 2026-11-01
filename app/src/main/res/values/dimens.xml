@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">14dp</dimen>
+    <dimen name="padding_large">18dp</dimen>
+    <dimen name="padding_screen">16dp</dimen>
+
+    <dimen name="corner_card">18dp</dimen>
+    <dimen name="corner_banner">20dp</dimen>
+    <dimen name="corner_button">18dp</dimen>
+    <dimen name="corner_small">10dp</dimen>
+    <dimen name="corner_icon_box">12dp</dimen>
+
+    <dimen name="banner_height">150dp</dimen>
+    <dimen name="icon_box_size">44dp</dimen>
+    <dimen name="avatar_size">28dp</dimen>
+    <dimen name="logo_size">40dp</dimen>
+
+    <!-- Home screen bands: the two rows hold the same height so the wallpaper stays visible between them. -->
+    <dimen name="home_row_height">76dp</dimen>
+    <dimen name="home_gutter">22dp</dimen>
+    <dimen name="home_logo_box">56dp</dimen>
+    <dimen name="home_side_button_height">35dp</dimen>
+
+    <!-- Settings screen: one column of flat rows under a category strip, like the desktop launcher. -->
+    <dimen name="setting_gutter">18dp</dimen>
+    <dimen name="setting_row_gap">2dp</dimen>
+    <dimen name="setting_row_padding">10dp</dimen>
+    <dimen name="setting_row_min_height">48dp</dimen>
+    <dimen name="setting_field_min_width">132dp</dimen>
+    <dimen name="setting_column_gap">12dp</dimen>
+    <dimen name="icon_box_size_setting">30dp</dimen>
+    <dimen name="tab_pill_height">44dp</dimen>
+    <dimen name="header_logo_box">52dp</dimen>
+    <dimen name="switch_track_width">46dp</dimen>
+    <dimen name="switch_track_height">24dp</dimen>
+    <dimen name="switch_thumb_size">18dp</dimen>
+
+    <!-- Stats screen: the week column is fixed so the bars compare across visits. -->
+    <dimen name="chart_height">120dp</dimen>
+    <dimen name="chart_bar_width">22dp</dimen>
+    <dimen name="tile_gap">5dp</dimen>
+    <dimen name="tile_min_height">62dp</dimen>
+    <dimen name="quick_tile_min_height">72dp</dimen>
+    <dimen name="home_strip_height">64dp</dimen>
+</resources>
