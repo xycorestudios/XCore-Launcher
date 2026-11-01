@@ -3,32 +3,90 @@
     <string name="app_name">X-Core Launcher</string>
     <string name="screen_title">Launcher foundation</string>
     <string name="subtitle_home">Play • Explore • Create</string>
-    <string name="subtitle_settings">Settings</string>
+    <string name="subtitle_settings">Language, theme, runtime and engine</string>
+    <string name="subtitle_instances">Installed instances and their file state</string>
+    <string name="subtitle_files">Game tree files</string>
+    <string name="subtitle_diagnostics">Engine diagnostics</string>
+
+    <!-- Home screen (landscape) -->
+    <string name="brand_xcore">X-Core</string>
+    <string name="brand_launcher">Launcher</string>
+    <string name="subtitle_play_beyond">Play Beyond Limits</string>
+    <string name="home_player">Player</string>
+    <string name="home_play">PLAY</string>
+    <string name="home_controls">Controls</string>
+    <string name="home_downloads">Downloads</string>
+    <string name="home_instances">Instances</string>
+    <string name="home_instances_sub">Manage your instances</string>
+    <string name="home_settings">Settings</string>
+    <string name="home_settings_sub">Customize your launcher</string>
+    <string name="home_no_instance">No instance</string>
+    <string name="home_no_version">Create one to get started</string>
+    <string name="action_back">Back</string>
+    <string name="picker_title">Selected instance</string>
+    <string name="picker_note">These are the instance rows in the launcher database. Picking one changes what Play launches; nothing here invents a version.</string>
+    <string name="picker_empty">No instances exist yet. Create one and it is written to the database before it can be selected.</string>
+    <string name="downloads_title">Downloads</string>
+    <string name="downloads_note">Rows are the installer\'s persisted state and the engine task list. Live byte counts drive the Play bar while a transfer runs.</string>
+    <string name="downloads_empty">No install has run on this device yet, so there is no transfer state to show.</string>
+    <string name="action_open_game_tree">Open game tree</string>
+    <string name="action_new_instance">New instance</string>
+    <string name="action_select">Select</string>
 
     <!-- Navigation -->
-    <string name="nav_instances">Instances</string>
+    <string name="nav_instances">My Instances</string>
     <string name="nav_files">Files</string>
     <string name="nav_settings">Settings</string>
-    <string name="action_play">Play</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_create">Create</string>
+    <string name="action_close">Close</string>
+    <string name="menu_options">Options</string>
+    <string name="menu_select">Select</string>
+    <string name="menu_install">Install version files</string>
+    <string name="menu_audit">Verify installed files</string>
+    <string name="menu_inspect">Inspect directory</string>
+    <string name="menu_delete">Delete</string>
 
     <!-- Banner -->
     <string name="tag_java_edition">Java Edition</string>
     <string name="banner_title">Minecraft</string>
-    <string name="banner_sub1">The legendary sandbox game.</string>
-    <string name="banner_sub2">Now on X-Core Launcher.</string>
+    <string name="banner_play_without_limits">JAVA EDITION ON MOBILE</string>
+    <string name="chip_fast">FAST</string>
+    <string name="chip_stable">STABLE</string>
+    <string name="chip_customizable">CUSTOMIZABLE</string>
+    <string name="section_my_instances">My Instances</string>
+    <string name="account_signed_out">No account</string>
 
     <!-- Instance -->
     <string name="instance_title_default">Vanilla</string>
     <string name="instance_version_default">1.21.4</string>
     <string name="tag_java">Java</string>
 
-    <!-- Empty State -->
-    <string name="empty_instances_title">No other instances yet</string>
+    <!-- Empty state -->
+    <string name="empty_instances_title">No instances yet</string>
     <string name="empty_instances_sub">Create a new one to get started.</string>
+    <string name="empty_other_instances_title">No other instances yet</string>
 
-    <!-- Settings Sections -->
-    <string name="setting_general_title">General</string>
-    <string name="setting_general_sub">App behaviour, language, updates</string>
+    <!-- Create instance -->
+    <string name="create_instance_title">New instance</string>
+    <string name="create_instance_note">This writes a metadata row and creates the instance directory. Tapping Play then fetches the version files from Mojang\'s distribution endpoints.</string>
+    <string name="field_name">Name</string>
+    <string name="field_version_id">Version id</string>
+    <string name="field_loader">Loader</string>
+    <string name="load_versions">Load official version list</string>
+    <string name="versions_loading">Contacting the version manifest…</string>
+    <string name="versions_empty">No versions loaded yet.</string>
+    <string name="eula_checkbox">I have read and accept the Minecraft EULA, and I own a copy of the game.</string>
+
+    <!-- Install -->
+    <string name="install_phase_resolving">Resolving metadata…</string>
+    <string name="install_ready">Files verified present</string>
+    <string name="install_not_installed">Files not installed</string>
+    <string name="install_failed">Install failed</string>
+    <string name="install_cancelled">Install interrupted</string>
+
+    <!-- Settings sections -->
+    <string name="setting_general_title">General</string>    <string name="setting_general_sub">App behaviour, language, updates</string>
 
     <string name="setting_graphics_title">Graphics</string>
     <string name="setting_graphics_sub">Renderer, performance, display</string>
@@ -48,10 +106,196 @@
     <string name="setting_about_title">About</string>
     <string name="setting_about_sub">Version, credits, legal</string>
 
-    <!-- Diagnostic & Engine -->
+    <!-- Diagnostics &amp; engine -->
     <string name="engine_new">Engine not started</string>
     <string name="start_engine">Start engine</string>
     <string name="shutdown_engine">Shut down</string>
     <string name="refresh">Refresh</string>
     <string name="no_layout">No storage layout has been prepared yet.</string>
+
+    <!-- Settings screen: tabs -->
+    <string name="setting_game_title">Game</string>
+    <string name="setting_game_sub">Instances, installs and launch history</string>
+    <string name="action_check_updates">Check for updates</string>
+    <string name="updates_working">Reading the version manifest…</string>
+    <string name="updates_title">Version manifest</string>
+    <string name="updates_note">The launcher has no update channel of its own. This reads the same manifest the installer uses, so the answer is about game versions, not about a newer X-Core build.</string>
+
+    <!-- Settings screen: rows. A row whose capability is a later phase opens a dialog naming it. -->
+    <string name="row_language_title">Language</string>
+    <string name="row_language_sub">Strings shipped in this build</string>
+    <string name="row_theme_title">Theme</string>
+    <string name="row_theme_sub">Palette the launcher draws with</string>
+    <string name="row_animations_title">Animations</string>
+    <string name="row_animations_sub">Screen, dialog and press motion</string>
+    <string name="row_runtime_channel_title">Runtime source</string>
+    <string name="row_runtime_channel_sub">Where the Java runtime is taken from</string>
+    <string name="row_verified_runtime_title">Verified runtime only</string>
+    <string name="row_verified_runtime_sub">Refuse a runtime with no published digest</string>
+    <string name="row_log_level_title">Log level</string>
+    <string name="row_log_level_sub">Verbosity of the engine log</string>
+    <string name="row_network_title">Downloads and network</string>
+    <string name="row_network_sub">Parallel transfers, timeout, user agent</string>
+    <string name="row_terms_title">Distribution terms</string>
+    <string name="row_terms_sub">EULA acceptance stored on this device</string>
+    <string name="row_reset_title">Reset settings</string>
+    <string name="row_reset_sub">Restore the launcher defaults</string>
+    <string name="row_selected_instance_title">Selected instance</string>
+    <string name="row_selected_instance_sub">What Play launches</string>
+    <string name="row_create_instance_title">Create instance</string>
+    <string name="row_create_instance_sub">Writes a metadata row and its directory</string>
+    <string name="row_install_state_title">Install state</string>
+    <string name="row_install_state_sub">Persisted phases and live transfers</string>
+    <string name="row_game_tree_title">Game tree</string>
+    <string name="row_game_tree_sub">Directories the launcher wrote</string>
+    <string name="row_engine_title">Engine</string>
+    <string name="row_engine_sub">Modules and their lifecycle state</string>
+    <string name="row_history_title">Launch history kept</string>
+    <string name="row_history_sub">Records older than this are pruned</string>
+    <string name="row_native_bridge_title">Native bridge</string>
+    <string name="row_native_bridge_sub">JNI bootstrap for the runtime</string>
+    <string name="row_provisioner_title">Runtime provisioner</string>
+    <string name="row_provisioner_sub">Signed runtime artifacts</string>
+    <string name="row_pipeline_title">Launch pipeline</string>
+    <string name="row_pipeline_sub">Process start and lifecycle</string>
+    <string name="row_surface_title">Graphics surface</string>
+    <string name="row_surface_sub">EGL and GLFW surface layer</string>
+    <string name="row_display_title">Display</string>
+    <string name="row_display_sub">Resolution, density and cutout</string>
+    <string name="row_version_title">Launcher version</string>
+    <string name="row_version_sub">Version name of this build</string>
+    <string name="row_engine_build_title">Engine build</string>
+    <string name="row_engine_build_sub">Version of the orchestration engine</string>
+    <string name="row_app_id_title">Application id</string>
+    <string name="row_app_id_sub">Package this build is installed as</string>
+    <string name="row_api_title">Android API</string>
+    <string name="row_api_sub">API level this device reports</string>
+    <string name="row_abi_title">Device ABI</string>
+    <string name="row_abi_sub">Native architecture selected</string>
+    <string name="row_capabilities_title">Capabilities</string>
+    <string name="row_capabilities_sub">What this build can and cannot do</string>
+    <string name="row_legal_title">Legal and terms</string>
+    <string name="row_legal_sub">Mojang ownership and the EULA</string>
+
+    <!-- Settings dialogs -->
+    <string name="choice_language_note">Only English strings are compiled into this APK, so the list holds one entry. A locale appears here when its values directory exists.</string>
+    <string name="choice_theme_note">This build ships one dark palette. Choosing a second theme needs a light resource set, which does not exist yet, so the dialog refuses to store one.</string>
+    <string name="choice_runtime_channel_note">LOCAL_ONLY never contacts the network: the installer will only use components already recorded as installed.</string>
+    <string name="choice_log_level_note">The engine logger filters at this level; the memory log keeps its own capacity setting.</string>
+    <string name="choice_history_note">This is the retention window for launch records in the metadata database.</string>
+    <string name="reset_title">Reset launcher settings</string>
+    <string name="reset_note">Configuration keys return to their defaults. Instances, the selected instance and the EULA acknowledgement are separate records and stay as they are.</string>
+    <string name="action_reset">Reset</string>
+    <string name="animations_note">Turning this off clears the window animation style, so dialogs and screen changes swap instantly. It takes effect for dialogs opened from now on.</string>
+    <string name="value_none">none</string>
+
+    <!-- Content library: what is on disk inside the selected instance. -->
+    <string name="library_title">Content Library</string>
+    <string name="library_sub">Resource packs, shaders and worlds on this device</string>
+    <string name="library_search_hint">Filter by name…</string>
+    <string name="library_empty">Nothing here yet. Files you drop into the instance folder show up on the next refresh.</string>
+    <string name="library_scope">Instance folder: %1$s</string>
+    <string name="library_scope_missing">No instance folder yet - install one first</string>
+    <string name="library_count">%1$d of %2$d entries</string>
+    <string name="filter_all">All</string>
+    <string name="filter_resource_packs">Packs</string>
+    <string name="filter_shader_packs">Shaders</string>
+    <string name="filter_worlds">Worlds</string>
+    <string name="kind_resource">pack</string>
+    <string name="kind_shader">shader</string>
+    <string name="kind_world">world</string>
+    <string name="kind_layout">layout</string>
+    <string name="library_folder_created">folder created at %1$s</string>
+    <string name="library_folder_failed">could not create %1$s: %2$s</string>
+    <string name="library_entry_detail">%1$s - modified %2$s</string>
+    <string name="library_entry_dir">%1$s - %2$s</string>
+    <string name="library_item_one">1 item</string>
+    <string name="library_item_many">%1$d items</string>
+    <string name="library_opened">Opened with the system viewer; X-Core does not parse this format.</string>
+
+    <!-- Session stats, read from the launch history table. -->
+    <string name="stats_title">Session Stats</string>
+    <string name="stats_sub">Measured from recorded launch sessions on this device</string>
+    <string name="stats_scope">%1$s in xcore_launch_history</string>
+    <string name="stats_scope_unknown">Launch history is not readable yet</string>
+    <string name="stats_total_label">Time recorded</string>
+    <string name="stats_hours_unit">hours</string>
+    <string name="stats_zero">0</string>
+    <string name="stats_last_label">Last session</string>
+    <string name="stats_week_label">Last 7 days</string>
+    <string name="stats_recent_label">Recent sessions</string>
+    <string name="stats_empty">No launch has been recorded yet. Rows appear when the launch pipeline starts and finishes a session.</string>
+    <string name="stats_minutes_detail">%1$d min logged in total</string>
+    <string name="stats_no_session">no session recorded</string>
+    <string name="stats_launches">Launches</string>
+    <string name="stats_sessions_closed">Closed</string>
+    <string name="stats_sessions_open">Still open</string>
+    <string name="stats_failures">Failed</string>
+    <string name="stats_average">Average length</string>
+    <string name="stats_longest">Longest</string>
+    <string name="stats_top_version">Most used</string>
+    <string name="stats_records">Rows stored</string>
+    <string name="stats_week_peak">peak %1$s</string>
+    <string name="stats_day_none">-</string>
+    <string name="stats_open_row">Started %1$s and never reported an exit code.</string>
+    <string name="stats_failed_row">%1$s - %2$s</string>
+
+    <!-- Event log screen. -->
+    <string name="logs_title">Event Log</string>
+    <string name="logs_sub">Records still held in the engine\'s memory buffer</string>
+    <string name="logs_summary">%1$d kept - %2$d dropped - filter %3$s</string>
+    <string name="logs_empty">The buffer is empty at this level. Lower the filter or use the launcher for a while.</string>
+    <string name="logs_clear">Clear buffer</string>
+    <string name="logs_cleared">Memory log cleared; %1$d engine events are still on the bus.</string>
+    <string name="logs_filter_all">All</string>
+    <string name="logs_filter_debug">Debug</string>
+    <string name="logs_filter_info">Info</string>
+    <string name="logs_filter_warn">Warn</string>
+    <string name="logs_filter_error">Error</string>
+    <string name="logs_events_header">engine events</string>
+
+    <!-- Touch controls screen: a capability gap shown as one, not as a working editor. -->
+    <string name="controls_title">Touch Controls</string>
+    <string name="controls_sub">Overlay layouts for the in-game surface</string>
+    <string name="controls_state_blocked">Editor not available in this build</string>
+    <string name="controls_state_ready">Layout files found - the overlay still cannot render</string>
+    <string name="controls_note_state">Native bridge: %1$s - graphics surface: %2$s</string>
+    <string name="controls_note_phase">Both land in %1$s. Until then a layout cannot be drawn or saved, so this screen does not offer to.</string>
+    <string name="controls_path_label">Layouts would live at %1$s</string>
+    <string name="controls_add_button">Add button</string>
+    <string name="controls_add_stick">Add stick</string>
+    <string name="controls_add_fps">FPS counter</string>
+    <string name="controls_profiles">Layouts</string>
+    <string name="controls_layouts_label">Layout files on disk</string>
+    <string name="controls_layouts_empty">No layout files in the game tree.</string>
+    <string name="nav_library">Library</string>
+    <string name="nav_stats">Stats</string>
+    <string name="nav_logs">Log</string>
+    <string name="nav_controls">Controls</string>
+    <!-- Left rail: the account block and the one status line that reflects real engine state. -->
+    <string name="nav_play">Play</string>
+    <string name="rail_account">Player</string>
+    <string name="rail_status_pending">Storage not probed yet</string>
+    <string name="rail_status_ready">Storage ready · %1$d services</string>
+    <string name="home_library_sub">Packs and worlds</string>
+    <string name="home_stats_sub">Session history</string>
+    <string name="home_logs_sub">Engine records</string>
+    <string name="home_controls_sub">Overlay layouts</string>
+
+    <!-- Settings: uppercase group headings inside each category pane. -->
+    <string name="settings_section_general">General</string>
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_section_storage">Storage and runtime</string>
+    <string name="settings_section_instance">Selected instance</string>
+    <string name="settings_section_installation">Installation</string>
+    <string name="settings_section_sessions">Sessions</string>
+    <string name="settings_section_rendering">Rendering</string>
+    <string name="settings_section_input_display">Input and display</string>
+    <string name="settings_section_build">Build</string>
+    <string name="settings_section_device">Device</string>
+    <string name="settings_section_legal">Legal</string>
+    <string name="version_card_title">X-Core Launcher</string>
+    <string name="version_card_sub">Version %1$s · no update feed configured</string>
+    <string name="files_section_tree">Game tree</string>
+    <string name="section_installations">Installations</string>
 </resources>

@@ -544,6 +544,20 @@ class XCoreInstallUseCases(
         return refreshed.flatMap { graph.catalog.listVersions(releaseTypes = types, query = query, limit = limit) }
     }
 
+    /**
+     * Makes sure [versionId] has a `versions` row, fetching only its metadata if it does not.
+     *
+     * `instances.version_id` is a foreign key, so an instance cannot be saved for a version the
+     * launcher has never read a profile for. Registration writes metadata only; the game files still
+     * arrive through [install].
+     */
+    suspend fun ensureRegistered(versionId: String): XCoreResult<XCoreVersionRef> =
+        graph().flatMap { graph ->
+            graph.catalog.registered(versionId).flatMap { existing ->
+                existing?.asXCoreSuccess() ?: graph.catalog.register(versionId)
+            }
+        }
+
     /** What installing [versionId] would download, counted from metadata. Writes nothing. */
     suspend fun plan(
         versionId: String,

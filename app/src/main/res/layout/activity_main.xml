@@ -1,47 +1,281 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Landscape shell, built the way the desktop launcher is: a permanent rail on the left that owns
+    the account and the destinations, and one pane on the right that swaps its content by
+    visibility. A tab switch is a property change, not a fragment transaction, so the selected
+    instance and the version list survive it.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/xcore_bg">
+    android:background="@color/mc_pane"
+    android:orientation="horizontal">
 
-    <!-- Header Bar -->
-    <include
-        android:id="@+id/layout_header"
-        layout="@layout/layout_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true" />
-
-    <!-- Bottom Controls Area (Play button + Bottom nav) -->
+    <!-- ============================================================ LEFT RAIL -->
     <LinearLayout
-        android:id="@+id/container_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:id="@+id/sidebar"
+        android:layout_width="212dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_sidebar"
         android:orientation="vertical">
 
-        <!-- Bottom Navigation Bar -->
-        <include
-            android:id="@+id/layout_bottom_nav"
-            layout="@layout/layout_bottom_nav" />
+        <!-- Account -->
+        <LinearLayout
+            android:id="@+id/container_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="14dp"
+            android:paddingTop="14dp"
+            android:paddingEnd="12dp">
 
-        <!-- Play Button -->
-        <include
-            android:id="@+id/layout_play_button"
-            layout="@layout/layout_play_button" />
+            <ImageView
+                android:id="@+id/iv_account_avatar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:contentDescription="@null"
+                android:src="@drawable/steve_head" />
 
+            <TextView
+                android:id="@+id/tv_account_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:text="@string/rail_account"
+                android:textColor="@color/mc_white"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/btn_account_switch"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@null"
+                android:focusable="true"
+                android:padding="5dp"
+                android:src="@drawable/ic_chevron_down"
+                android:tint="@color/mc_dim" />
+        </LinearLayout>
+
+        <!-- Live status: the dot and the word both come from the engine, not from a string. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="14dp"
+            android:paddingEnd="12dp">
+
+            <View
+                android:id="@+id/v_status_dot"
+                android:layout_width="7dp"
+                android:layout_height="7dp"
+                android:background="@drawable/bg_pixel" />
+
+            <TextView
+                android:id="@+id/tv_status_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Connected"
+                android:textColor="@color/mc_dim_deep"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="@color/mc_line_soft" />
+
+        <LinearLayout
+            android:id="@+id/container_nav"
+            android:layout_width="198dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/nav_play"
+                layout="@layout/layout_nav_row"
+                android:layout_width="match_parent"
+                android:layout_height="42dp" />
+
+            <include
+                android:id="@+id/nav_instances"
+                layout="@layout/layout_nav_row"
+                android:layout_width="match_parent"
+                android:layout_height="42dp" />
+
+            <include
+                android:id="@+id/nav_library"
+                layout="@layout/layout_nav_row"
+                android:layout_width="match_parent"
+                android:layout_height="42dp" />
+
+            <include
+                android:id="@+id/nav_stats"
+                layout="@layout/layout_nav_row"
+                android:layout_width="match_parent"
+                android:layout_height="42dp" />
+
+            <include
+                android:id="@+id/nav_logs"
+                layout="@layout/layout_nav_row"
+                android:layout_width="match_parent"
+                android:layout_height="42dp" />
+
+            <include
+                android:id="@+id/nav_controls"
+                layout="@layout/layout_nav_row"
+                android:layout_width="match_parent"
+                android:layout_height="42dp" />
+
+            <include
+                android:id="@+id/nav_files"
+                layout="@layout/layout_nav_row"
+                android:layout_width="match_parent"
+                android:layout_height="42dp" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/mc_line_soft" />
+
+        <include
+            android:id="@+id/nav_settings"
+            layout="@layout/layout_nav_row"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="12dp" />
     </LinearLayout>
 
-    <!-- Fragment / Main Content Container -->
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
+    <View
+        android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:layout_above="@id/container_bottom"
-        android:layout_below="@id/layout_header">
+        android:background="@color/mc_line_soft" />
 
-        <include layout="@layout/fragment_instances" />
+    <!-- ============================================================ MAIN PANE -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    </FrameLayout>
+        <include
+            android:id="@+id/layout_sub_header"
+            layout="@layout/layout_sub_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-</RelativeLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/iv_home_background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                android:src="@drawable/bg_home_landscape" />
+
+            <View
+                android:id="@+id/bg_home_scrim"
+                android:layout_width="match_parent"
+                android:layout_height="372dp"
+                android:background="@drawable/bg_home_scrim" />
+
+            <LinearLayout
+                android:id="@+id/container_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/mc_pane"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <include
+                        android:id="@+id/screen_instances"
+                        layout="@layout/fragment_instances"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <include
+                        android:id="@+id/screen_files"
+                        layout="@layout/fragment_files"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone" />
+
+                    <include
+                        android:id="@+id/screen_library"
+                        layout="@layout/fragment_library"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone" />
+
+                    <include
+                        android:id="@+id/screen_stats"
+                        layout="@layout/fragment_stats"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone" />
+
+                    <include
+                        android:id="@+id/screen_logs"
+                        layout="@layout/fragment_logs"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone" />
+
+                    <include
+                        android:id="@+id/screen_controls"
+                        layout="@layout/fragment_controls"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone" />
+
+                    <include
+                        android:id="@+id/screen_settings"
+                        layout="@layout/fragment_settings"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <include
+                android:id="@+id/screen_home"
+                layout="@layout/layout_home"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+    </LinearLayout>
+</LinearLayout>

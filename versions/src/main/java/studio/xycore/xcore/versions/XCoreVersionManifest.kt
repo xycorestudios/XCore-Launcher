@@ -253,7 +253,13 @@ class XCoreVersionManifest(
             retryable = false,
         ).asXCoreFailure()
 
-    /** Newest first, optionally narrowed to a set of release types and a substring of the id. */
+    /**
+     * Newest release first, optionally narrowed to a set of release types and a substring of the id.
+     *
+     * `releaseTime` orders the list because Mojang rewrites `time` for every entry whenever it
+     * republishes metadata; a bulk touch of an old version would otherwise float it above current
+     * releases. [XCoreManifestEntry.timeMillis] only breaks ties between entries released together.
+     */
     fun select(
         releaseTypes: Set<XCoreReleaseType>? = null,
         query: String? = null,
@@ -265,8 +271,8 @@ class XCoreVersionManifest(
             .filter { releaseTypes == null || it.releaseType in releaseTypes }
             .filter { needle == null || it.id.lowercase().contains(needle) }
             .sortedWith(
-                compareByDescending<XCoreManifestEntry> { it.timeMillis }
-                    .thenByDescending { it.releaseTimeMillis }
+                compareByDescending<XCoreManifestEntry> { it.releaseTimeMillis }
+                    .thenByDescending { it.timeMillis }
                     .thenByDescending { it.id },
             )
             .take(limit.coerceAtLeast(0))

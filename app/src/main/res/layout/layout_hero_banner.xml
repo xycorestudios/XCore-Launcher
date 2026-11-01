@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    The hero on the Play page and at the top of the instances list: a full-bleed panorama, a scrim
+    that holds back the brightness, and the game's name lockup centred on the image the way the
+    desktop client paints its artwork.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/hero_root"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/banner_height"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:background="@drawable/bg_card">
+    android:layout_height="@dimen/banner_height">
 
-    <!-- Minecraft Landscape Image -->
     <ImageView
         android:id="@+id/iv_panorama"
         android:layout_width="match_parent"
@@ -16,62 +17,54 @@
         android:scaleType="centerCrop"
         android:src="@drawable/hero_panorama" />
 
-    <!-- Gradient Overlay -->
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#B3050907" />
+        android:background="@drawable/bg_hero_scrim" />
 
-    <!-- Content Text & Badge -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|start"
+        android:layout_gravity="bottom|center_horizontal"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="18dp">
+        android:paddingStart="20dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="16dp">
 
-        <!-- Java Edition Tag -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_pill_java"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="9dp"
-            android:paddingTop="5dp"
-            android:paddingEnd="9dp"
-            android:paddingBottom="5dp">
-
-            <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_cube" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:fontFamily="monospace"
-                android:text="@string/tag_java_edition"
-                android:textColor="@color/xcore_accent"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- Banner Title -->
+        <!-- The lockup is the game's: the word first, the edition stamped under it. Typeface
+             comes from MainActivity, which loads it through ResourcesCompat for API 24. -->
         <TextView
             android:id="@+id/tv_banner_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:fontFamily="monospace"
+            android:letterSpacing="0.04"
+            android:maxLines="1"
+            android:shadowColor="#CC000000"
+            android:shadowDx="0"
+            android:shadowDy="3"
+            android:shadowRadius="0"
             android:text="@string/banner_title"
-            android:textColor="@color/xcore_text"
-            android:textSize="30sp"
-            android:textStyle="bold" />
+            android:textAllCaps="true"
+            android:textColor="@color/mc_white"
+            android:textSize="30sp" />
 
-        <!-- Subtitle Lines -->
+        <TextView
+            android:id="@+id/tv_banner_kicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:letterSpacing="0.22"
+            android:maxLines="1"
+            android:shadowColor="#B3000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="0"
+            android:text="@string/tag_java_edition"
+            android:textAllCaps="true"
+            android:textColor="@color/mc_green_bright"
+            android:textSize="13sp" />
 
     </LinearLayout>
 

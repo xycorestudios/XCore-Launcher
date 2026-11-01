@@ -61,9 +61,9 @@ class XCorePreferences private constructor(
         }
 
     /**
-     * Removes configuration keys only. `app.*` keys (selected instance, last launch, onboarding)
-     * survive, because resetting settings and losing which instance was selected are different
-     * things a user did not ask for.
+     * Removes configuration keys only. `app.*` keys (selected instance, last launch, onboarding) and
+     * `ui.*` keys survive, because resetting settings and losing which instance was selected are
+     * different things a user did not ask for.
      */
     override suspend fun reset(): XCoreResult<Unit> = xCoreRun(
         origin = "preferences.reset",
@@ -120,8 +120,36 @@ class XCorePreferences private constructor(
 
     suspend fun lastLaunchMillis(): Long? = currentPreferences()[KEY_LAST_LAUNCH_MILLIS]
 
+    /**
+     * The three interface choices the settings screen owns: language tag, theme tag and whether the
+     * launcher animates. They are app-level rather than engine configuration because the engine reads
+     * none of them; a value only becomes meaningful once the resources it names exist.
+     */
+    val uiSettings: Flow<XCoreUiSettings> = dataStore.data.map { preferences ->
+        decodeUi(preferences)
+    }
+
+    suspend fun uiSettingsNow(): XCoreUiSettings = decodeUi(currentPreferences())
+
+    suspend fun setUiSettings(settings: XCoreUiSettings): XCoreResult<Unit> = xCoreRun(
+        origin = "preferences.setUiSettings",
+        errorKind = XCoreErrorKind.PREFERENCES,
+    ) {
+        dataStore.edit { preferences ->
+            preferences[KEY_UI_LANGUAGE] = settings.language
+            preferences[KEY_UI_THEME] = settings.theme
+            preferences[KEY_UI_ANIMATIONS] = settings.animationsEnabled
+        }
+    }
+
     /** Snapshot of the current store contents; an unreadable store propagates as an exception. */
     private suspend fun currentPreferences(): Preferences = dataStore.data.first()
+
+    private fun decodeUi(preferences: Preferences): XCoreUiSettings = XCoreUiSettings(
+        language = preferences[KEY_UI_LANGUAGE] ?: XCoreUiSettings.LANGUAGE_DEFAULT,
+        theme = preferences[KEY_UI_THEME] ?: XCoreUiSettings.THEME_DEFAULT,
+        animationsEnabled = preferences[KEY_UI_ANIMATIONS] != false,
+    )
 
     private fun decode(preferences: Preferences): XCoreResult<XCoreConfig> {
         val unreadable = ArrayList<XCoreError>(4)
@@ -239,6 +267,9 @@ class XCorePreferences private constructor(
         private val KEY_SELECTED_INSTANCE = stringPreferencesKey("app.selectedInstanceId")
         private val KEY_LAST_LAUNCH_MILLIS = longPreferencesKey("app.lastLaunchMillis")
         private val KEY_ONBOARDING_ACK = booleanPreferencesKey("app.onboardingAcknowledged")
+        private val KEY_UI_LANGUAGE = stringPreferencesKey("ui.language")
+        private val KEY_UI_THEME = stringPreferencesKey("ui.theme")
+        private val KEY_UI_ANIMATIONS = booleanPreferencesKey("ui.animationsEnabled")
 
         private val CONFIG_KEYS: List<Preferences.Key<*>> = listOf(
             KEY_ENVIRONMENT,
@@ -274,5 +305,21 @@ class XCorePreferences private constructor(
             }
             return XCorePreferences(store)
         }
+    }
+}
+
+/**
+ * Interface choices the settings screen persists. Both tags name something that must exist in this
+ * build: a language only appears in the list when its string resources are compiled in, and the one
+ * palette shipped so far is `dark`.
+ */
+data class XCoreUiSettings(
+    val language: String = LANGUAGE_DEFAULT,
+    val theme: String = THEME_DEFAULT,
+    val animationsEnabled: Boolean = true,
+) {
+    companion object {
+        const val LANGUAGE_DEFAULT = "en"
+        const val THEME_DEFAULT = "dark"
     }
 }

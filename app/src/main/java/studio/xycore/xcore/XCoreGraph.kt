@@ -35,12 +35,17 @@ import studio.xycore.xcore.domain.XCoreCapabilityReport
 import studio.xycore.xcore.domain.XCoreConfigUseCases
 import studio.xycore.xcore.domain.XCoreDiagnosticsUseCases
 import studio.xycore.xcore.domain.XCoreInstanceUseCases
+import studio.xycore.xcore.domain.XCoreInstallUseCases
 import studio.xycore.xcore.domain.XCoreLauncherModules
 import studio.xycore.xcore.domain.XCoreLaunchUseCases
 import studio.xycore.xcore.domain.XCoreReadinessModule
 import studio.xycore.xcore.domain.XCoreRepositories
+import studio.xycore.xcore.domain.XCoreRepositoryDownloadJournal
 import studio.xycore.xcore.domain.XCoreRuntimeUseCases
 import studio.xycore.xcore.domain.XCoreVersionUseCases
+import studio.xycore.xcore.runtime.XCoreDeviceFacts
+import studio.xycore.xcore.runtime.XCoreRuntimeManager
+import studio.xycore.xcore.runtime.XCoreRuntimeModule
 import studio.xycore.xcore.services.XCoreServiceRegistry
 import studio.xycore.xcore.services.XCoreTaskManager
 
@@ -106,8 +111,34 @@ class XCoreGraph(context: Context) {
         configStore = preferences,
     )
 
-    val instances: XCoreInstanceUseCases = XCoreInstanceUseCases(
+    /**
+     * What this phone actually is, as the runtime engine measures it.
+     *
+     * Read once: the ABI, API level and total RAM of a device do not change while the process lives,
+     * and every runtime decision - which archive suits it, whether a staged binary may be executed -
+     * is derived from these facts rather than from a setting.
+     */
+    val deviceFacts: XCoreDeviceFacts = XCoreDeviceFacts.readFrom(appContext)
+
+    /**
+     * The Phase 3 runtime subsystem: detection, selection, installation, native survey and command
+     * planning.
+     *
+     * It reads the live config through [XCoreEngine.config] rather than a snapshot taken here, so
+     * changing the runtime channel in settings affects the next install instead of needing a restart.
+     */
+    val runtimeEngine: XCoreRuntimeManager = XCoreRuntimeManager(
+        device = deviceFacts,
+        paths = paths,
         repositories = repositories,
+        services = services,
+        configOf = { engine.config.value },
+        events = events,
+        logger = logger,
+        journal = XCoreRepositoryDownloadJournal(repositories),
+    )
+
+    val instances: XCoreInstanceUseCases = XCoreInstanceUseCases(        repositories = repositories,
         paths = paths,
         services = services,
         events = events,
@@ -135,6 +166,15 @@ class XCoreGraph(context: Context) {
 
     val configUseCases: XCoreConfigUseCases = XCoreConfigUseCases(preferences)
 
+    /**
+     * The Phase 2 pipeline, resolved from the service catalog on each call.
+     *
+     * It is a locator and not a stored graph reference so a call made before
+     * `xcore.installation` has started reports a service error instead of installing against a
+     * half-built object graph.
+     */
+    val installations: XCoreInstallUseCases = XCoreInstallUseCases(services, logger)
+
     val diagnostics: XCoreDiagnosticsUseCases = XCoreDiagnosticsUseCases(
         engine = engine,
         repositories = repositories,
@@ -146,7 +186,13 @@ class XCoreGraph(context: Context) {
     /** Modules are registered once, before the engine can start; a rejection stays visible. */
     val moduleInstall: XCoreResult<Unit> = XCoreLauncherModules.install(
         engine = engine,
-        modules = XCoreLauncherModules.foundation(paths, database, repositories),
+        modules = XCoreLauncherModules.foundation(
+            paths = paths,
+            database = database,
+            repositories = repositories,
+            logger = logger,
+            extraModules = listOf(XCoreRuntimeModule(runtimeEngine)),
+        ),
     )
 
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)

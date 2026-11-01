@@ -41,7 +41,7 @@ enum class XCoreCapability(
     STORAGE_LAYOUT(XCoreServiceIds.STORAGE_LAYOUT, "Storage layout", "Phase 1", true),
     VERSION_INDEX(XCoreServiceIds.VERSION_INDEX, "Version manifest reader", "Phase 2", true),
     DOWNLOAD_ENGINE(XCoreServiceIds.DOWNLOAD_ENGINE, "Download engine", "Phase 2", true),
-    RUNTIME_PROVISIONER(XCoreServiceIds.RUNTIME_PROVISIONER, "Java runtime provisioner", "Phase 3", false),
+    RUNTIME_PROVISIONER(XCoreServiceIds.RUNTIME_PROVISIONER, "Java runtime provisioner", "Phase 3", true),
     AUTHENTICATION(XCoreServiceIds.AUTHENTICATION, "Microsoft / Mojang authentication", "Phase 4", false),
     NATIVE_BRIDGE(XCoreServiceIds.NATIVE_BRIDGE, "Native bridge (JNI bootstrap)", "Phase 5", false),
     GRAPHICS_SURFACE(XCoreServiceIds.GRAPHICS_SURFACE, "EGL / GLFW graphics surface", "Phase 5", false),
@@ -240,16 +240,25 @@ class XCoreReadinessModule : XCoreModule {
 /** The modules this build can install into the engine, in dependency order. */
 object XCoreLauncherModules {
 
+    /**
+     * The modules this build can install into the engine, in dependency order.
+     *
+     * [extraModules] is where a capability that lives in a module above this one - the Phase 3
+     * runtime engine, which depends on `:domain` rather than the reverse - is inserted before the
+     * readiness report is taken. Passing nothing keeps the pre-Phase-3 set exactly as it was.
+     */
     fun foundation(
         paths: XCorePaths,
         database: XCoreDatabase,
         repositories: XCoreRepositories,
         io: CoroutineDispatcher = Dispatchers.IO,
         logger: XCoreLogger? = null,
+        extraModules: List<XCoreModule> = emptyList(),
     ): List<XCoreModule> = listOf(
         XCoreStorageModule(paths, io),
         XCoreMetadataModule(database, repositories, io),
         XCoreInstallationModule(repositories, io, logger),
+    ) + extraModules + listOf(
         XCoreReadinessModule(),
     )
 

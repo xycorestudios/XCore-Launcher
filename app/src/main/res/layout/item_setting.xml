@@ -1,64 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    One settings row. The trailing control is chosen per row in code: a value chip for a setting
+    with a list of real options, a switch for a boolean, or a chevron for a row that opens a screen.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_setting"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    android:background="@drawable/bg_setting_card"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:padding="14dp">
+    style="@style/XCoreSettingRow">
 
-    <!-- Green Icon Container Box -->
     <FrameLayout
         android:id="@+id/container_icon"
-        android:layout_width="@dimen/icon_box_size"
-        android:layout_height="@dimen/icon_box_size"
-        android:background="@drawable/bg_icon_box">
+        style="@style/XCoreIconBox"
+        android:layout_width="@dimen/icon_box_size_setting"
+        android:layout_height="@dimen/icon_box_size_setting">
 
         <ImageView
             android:id="@+id/iv_setting_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
             android:layout_gravity="center"
             android:contentDescription="@null"
-            android:src="@drawable/ic_gear" />
+            android:src="@drawable/ic_gear"
+            android:tint="@color/xcore_accent" />
     </FrameLayout>
 
-    <!-- Text Titles -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="14dp"
+        android:layout_marginStart="11dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_setting_title"
+            style="@style/XCoreText.SettingTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:text="@string/setting_general_title"
-            android:textColor="@color/xcore_text"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:text="@string/setting_general_title" />
 
         <TextView
             android:id="@+id/tv_setting_subtitle"
+            style="@style/XCoreText.Caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:fontFamily="monospace"
-            android:text="@string/setting_general_sub"
-            android:textColor="@color/xcore_text_muted"
-            android:textSize="13sp" />
+            android:text="@string/setting_general_sub" />
     </LinearLayout>
 
-    <!-- Chevron Right Arrow -->
+    <TextView
+        android:id="@+id/row_value"
+        style="@style/XCoreText.ValueChip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:visibility="gone" />
+
+    <Switch
+        android:id="@+id/row_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:background="@null"
+        android:clickable="false"
+        android:focusable="false"
+        android:switchMinWidth="@dimen/switch_track_width"
+        android:thumb="@drawable/bg_switch_thumb"
+        android:track="@drawable/bg_switch_track"
+        android:visibility="gone" />
+
     <ImageView
+        android:id="@+id/row_chevron"
         android:layout_width="18dp"
         android:layout_height="18dp"
+        android:layout_marginStart="10dp"
         android:contentDescription="@null"
-        android:src="@drawable/ic_chevron_right" />
+        android:src="@drawable/ic_chevron_right"
+        android:tint="@color/xcore_text_muted"
+        android:visibility="gone" />
 
 </LinearLayout>

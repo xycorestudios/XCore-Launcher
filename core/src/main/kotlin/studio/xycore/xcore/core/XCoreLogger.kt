@@ -30,6 +30,8 @@ object XCoreLogTags {
     const val PREFERENCES = "XCore/Preferences"
     const val REPOSITORY = "XCore/Repository"
     const val USE_CASE = "XCore/UseCase"
+    const val RUNTIME = "XCore/Runtime"
+    const val NATIVE = "XCore/Native"
     const val EVENTS = "XCore/Events"
     const val UI = "XCore/UI"
 }

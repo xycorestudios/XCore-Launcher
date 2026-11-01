@@ -1,70 +1,715 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Official Minecraft Launcher Settings Screen:
+    Contains General, Accounts, and About tabs matching official design screenshots.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/settings_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#1C1C1C"
+    android:orientation="vertical">
 
-    <!-- Bottom Panorama Backdrop -->
-    <ImageView
+    <!-- Header Title & Sub-Tabs Bar -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="230dp"
-        android:layout_gravity="bottom"
-        android:alpha="0.22"
-        android:contentDescription="@null"
-        android:scaleType="centerCrop"
-        android:src="@drawable/hero_panorama" />
+        android:layout_height="wrap_content"
+        android:background="#181818"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="24dp">
 
-    <!-- Settings Cards List -->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="16dp">
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.06"
+            android:text="SETTINGS"
+            android:textColor="#888888"
+            android:textSize="11sp"
+            android:textStyle="bold" />
 
-            <!-- 1. General -->
-            <include
-                android:id="@+id/setting_general"
-                layout="@layout/item_setting" />
+        <!-- Sub-Tabs Row: General | Accounts | About -->
+        <LinearLayout
+            android:id="@+id/container_tabs"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <!-- 2. Graphics -->
-            <include
-                android:id="@+id/setting_graphics"
-                layout="@layout/item_setting" />
+            <!-- Tab 1: General -->
+            <LinearLayout
+                android:id="@+id/tab_general"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingEnd="20dp">
 
-            <!-- 3. Controls -->
-            <include
-                android:id="@+id/setting_controls"
-                layout="@layout/item_setting" />
+                <TextView
+                    android:id="@+id/tv_tab_general"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="General"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
-            <!-- 4. Storage -->
-            <include
-                android:id="@+id/setting_storage"
-                layout="@layout/item_setting" />
+                <View
+                    android:id="@+id/v_indicator_general"
+                    android:layout_width="32dp"
+                    android:layout_height="3dp"
+                    android:background="#2ECC57" />
+            </LinearLayout>
 
-            <!-- 5. Account -->
-            <include
-                android:id="@+id/setting_account"
-                layout="@layout/item_setting" />
+            <!-- Tab 2: Accounts -->
+            <LinearLayout
+                android:id="@+id/tab_accounts"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="20dp">
 
-            <!-- 6. Security -->
-            <include
-                android:id="@+id/setting_security"
-                layout="@layout/item_setting" />
+                <TextView
+                    android:id="@+id/tv_tab_accounts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Accounts"
+                    android:textColor="#AAAAAA"
+                    android:textSize="15sp" />
 
-            <!-- 7. About -->
-            <include
-                android:id="@+id/setting_about"
-                layout="@layout/item_setting" />
+                <View
+                    android:id="@+id/v_indicator_accounts"
+                    android:layout_width="32dp"
+                    android:layout_height="3dp"
+                    android:background="@android:color/transparent" />
+            </LinearLayout>
+
+            <!-- Tab 3: About -->
+            <LinearLayout
+                android:id="@+id/tab_about"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="20dp">
+
+                <TextView
+                    android:id="@+id/tv_tab_about"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="About"
+                    android:textColor="#AAAAAA"
+                    android:textSize="15sp" />
+
+                <View
+                    android:id="@+id/v_indicator_about"
+                    android:layout_width="32dp"
+                    android:layout_height="3dp"
+                    android:background="@android:color/transparent" />
+            </LinearLayout>
 
         </LinearLayout>
 
-    </ScrollView>
+    </LinearLayout>
 
-</FrameLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#282828" />
+
+    <!-- Main Container Frame for Tab Content -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- ============================================================ 1. GENERAL TAB -->
+        <ScrollView
+            android:id="@+id/group_general"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="32dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="32dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="32dp">
+
+                <!-- SECTION 1: LANGUAGE -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.06"
+                    android:text="LANGUAGE"
+                    android:textColor="#CCCCCC"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:id="@+id/btn_language_dropdown"
+                    android:layout_width="280dp"
+                    android:layout_height="36dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_dropdown_box"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:id="@+id/tv_selected_language"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="sans-serif"
+                        android:text="English - Australia"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp" />
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_down"
+                        android:tint="#AAAAAA" />
+                </RelativeLayout>
+
+                <!-- SECTION 2: LAUNCHER SETTINGS -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.06"
+                    android:text="LAUNCHER SETTINGS"
+                    android:textColor="#CCCCCC"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:id="@+id/check_beta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:button="@drawable/checkbox_green_selector"
+                    android:fontFamily="sans-serif"
+                    android:paddingStart="8dp"
+                    android:text="Use beta version of the Launcher"
+                    android:textColor="#DDDDDD"
+                    android:textSize="13sp" />
+
+                <CheckBox
+                    android:id="@+id/check_keep_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:button="@drawable/checkbox_green_selector"
+                    android:checked="true"
+                    android:fontFamily="sans-serif"
+                    android:paddingStart="8dp"
+                    android:text="Keep the Launcher open while games are running"
+                    android:textColor="#DDDDDD"
+                    android:textSize="13sp" />
+
+                <CheckBox
+                    android:id="@+id/check_animate_pages"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:button="@drawable/checkbox_green_selector"
+                    android:fontFamily="sans-serif"
+                    android:paddingStart="8dp"
+                    android:text="Animate transitions between pages in the Launcher"
+                    android:textColor="#DDDDDD"
+                    android:textSize="13sp" />
+
+                <CheckBox
+                    android:id="@+id/check_animate_play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:button="@drawable/checkbox_green_selector"
+                    android:fontFamily="sans-serif"
+                    android:paddingStart="8dp"
+                    android:text="Animate play button on the Play pages in the Launcher"
+                    android:textColor="#DDDDDD"
+                    android:textSize="13sp" />
+
+                <CheckBox
+                    android:id="@+id/check_disable_accel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:button="@drawable/checkbox_green_selector"
+                    android:fontFamily="sans-serif"
+                    android:paddingStart="8dp"
+                    android:text="Disable hardware acceleration (requires restarting the Launcher)"
+                    android:textColor="#DDDDDD"
+                    android:textSize="13sp" />
+
+                <!-- SECTION 3: MINECRAFT: JAVA EDITION SETTINGS -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.06"
+                    android:text="MINECRAFT: JAVA EDITION SETTINGS"
+                    android:textColor="#CCCCCC"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:id="@+id/check_output_log"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:button="@drawable/checkbox_green_selector"
+                    android:checked="true"
+                    android:fontFamily="sans-serif"
+                    android:paddingStart="8dp"
+                    android:text="Open output log when Minecraft: Java Edition starts"
+                    android:textColor="#DDDDDD"
+                    android:textSize="13sp" />
+
+                <CheckBox
+                    android:id="@+id/check_crash_reports"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:button="@drawable/checkbox_green_selector"
+                    android:checked="true"
+                    android:fontFamily="sans-serif"
+                    android:paddingStart="8dp"
+                    android:text="Automatically send Minecraft: Java Edition crash reports to Mojang Studios"
+                    android:textColor="#DDDDDD"
+                    android:textSize="13sp" />
+
+                <CheckBox
+                    android:id="@+id/check_historical_versions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:button="@drawable/checkbox_green_selector"
+                    android:fontFamily="sans-serif"
+                    android:paddingStart="8dp"
+                    android:text="Show historical versions of Minecraft: Java Edition in the Launcher"
+                    android:textColor="#DDDDDD"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <!-- ============================================================ 2. ACCOUNTS TAB -->
+        <ScrollView
+            android:id="@+id/group_accounts"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="32dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="32dp"
+            android:scrollbars="none"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="32dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.06"
+                    android:text="ACTIVE ACCOUNTS"
+                    android:textColor="#CCCCCC"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="320dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_dropdown_box"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_person" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="Steve"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="sans-serif"
+                            android:text="Microsoft account · Connected"
+                            android:textColor="#2ECC57"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <!-- ============================================================ 3. ABOUT TAB (MATCHING SCREENSHOT 3) -->
+        <ScrollView
+            android:id="@+id/group_about"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="32dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="32dp"
+            android:scrollbars="none"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="40dp">
+
+                <!-- SECTION 1: Launcher for Windows / Android -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="Launcher for Windows"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="sans-serif"
+                            android:text="Windows 10.0 3.42.5"
+                            android:textColor="#A0A0A0"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="sans-serif"
+                            android:text="Thursday, October 22, 2026 at 5:06:55 AM"
+                            android:textColor="#888888"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="monospace"
+                            android:text="92e3685bcabb1c1352be99e8e26cfb1be18e553f"
+                            android:textColor="#777777"
+                            android:textSize="11sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:gravity="end"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/btn_whats_new"
+                            android:layout_width="120dp"
+                            android:layout_height="32dp"
+                            android:background="@drawable/bg_about_button"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:fontFamily="sans-serif-medium"
+                            android:gravity="center"
+                            android:text="What's New"
+                            android:textColor="#DDDDDD"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/btn_report_bug"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="Report a Launcher bug ↗"
+                            android:textColor="#FFFFFF"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="#282828" />
+
+                <!-- SECTION 2: Bootstrap -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Bootstrap"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="sans-serif"
+                        android:text="2.6.12"
+                        android:textColor="#A0A0A0"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Wednesday, July 29, 2026 at 5:38:49 PM"
+                        android:textColor="#888888"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="monospace"
+                        android:text="549cd677b6133c93eb11093d03518fb29edb3b53"
+                        android:textColor="#777777"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="#282828" />
+
+                <!-- SECTION 3: UI -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="UI"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="sans-serif"
+                        android:text="3.42.5"
+                        android:textColor="#A0A0A0"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="sans-serif"
+                        android:text="Thursday, October 22, 2026 at 4:59:00 AM"
+                        android:textColor="#888888"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="monospace"
+                        android:text="92e3685bcabb1c1352be99e8e26cfb1be18e553f"
+                        android:textColor="#777777"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="#282828" />
+
+                <!-- SECTION 4: Legal -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Legal"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:fontFamily="sans-serif"
+                        android:text="For the End User License Agreement (EULA), click here ↗ ."
+                        android:textColor="#A0A0A0"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="sans-serif"
+                        android:text="For the Privacy Policy, click here ↗ ."
+                        android:textColor="#A0A0A0"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="#282828" />
+
+                <!-- SECTION 5: Credits and Third-party licenses -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Credits and Third-party licenses"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:fontFamily="sans-serif"
+                        android:text="A big thanks to:"
+                        android:textColor="#A0A0A0"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="•  NameMC ↗ for letting us use your awesome work as inspiration for Skins"
+                        android:textColor="#DDDDDD"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/btn_third_party_licenses"
+                        android:layout_width="160dp"
+                        android:layout_height="32dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/bg_about_button"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:text="Third-party licenses"
+                        android:textColor="#DDDDDD"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </FrameLayout>
+
+</LinearLayout>

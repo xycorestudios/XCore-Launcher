@@ -75,7 +75,9 @@ class XCoreHashVerifier(private val chunkBytes: Int = 64 * 1024) {
      * Checks length first, then digest.
      *
      * The cheap test runs first because a truncated transfer is by far the most common failure and
-     * hashing a 40 MB file to discover it is 12 MB short wastes the user's battery.
+     * hashing a 40 MB file to discover it is 12 MB short wastes the user's battery. Either direction
+     * of mismatch counts: a file with a byte for every one the metadata declared, and one that is
+     * longer than promised, are both not what was published.
      */
     fun verify(
         file: File,
@@ -90,7 +92,7 @@ class XCoreHashVerifier(private val chunkBytes: Int = 64 * 1024) {
             ).asXCoreFailure()
         }
         val size = file.length()
-        if (expectedBytes in 1L until size) {
+        if (expectedBytes > 0L && size != expectedBytes) {
             return XCoreError.Storage(
                 detail = "${file.absolutePath} is $size bytes but the metadata declares $expectedBytes",
                 path = file.absolutePath,

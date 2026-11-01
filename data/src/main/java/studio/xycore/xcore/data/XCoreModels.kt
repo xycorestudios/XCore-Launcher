@@ -12,9 +12,10 @@ import studio.xycore.xcore.core.asXCoreSuccess
  * Release type as published in Mojang's `version_manifest_v2.json`.
  *
  * [manifestId] is what this app writes to and reads from SQLite; [wireAliases] are the strings the
- * live manifest actually contains. Mojang renamed the pre-release buckets to `old_beta` and
- * `old_alpha` long after these enum constants were chosen, so accepting both spellings keeps old
- * rows readable while a fresh manifest parse still succeeds.
+ * live manifest actually contains. Mojang renamed the pre-1.0 buckets to `old_beta` and `old_alpha`
+ * long after these enum constants were chosen, so accepting the old spellings keeps previously
+ * stored rows readable while a fresh manifest parse still succeeds. The two pre-1.0 buckets keep
+ * their own constants rather than collapsing into one type because the UI labels each row.
  */
 enum class XCoreReleaseType(
     val manifestId: String,
@@ -23,8 +24,8 @@ enum class XCoreReleaseType(
 ) {
     RELEASE("release", "Release"),
     SNAPSHOT("snapshot", "Snapshot"),
-    OLD_RELEASE("old-release", "Old release"),
-    OLD_SNAPSHOT("old-snapshot", "Old snapshot", setOf("old_beta", "old_alpha")),
+    OLD_RELEASE("old-release", "Old release", setOf("old_beta")),
+    OLD_SNAPSHOT("old-snapshot", "Old snapshot", setOf("old_alpha")),
     ;
 
     val acceptedManifestValues: Set<String>

@@ -377,7 +377,9 @@ class XCoreDownloadManager(
                 )
             }
 
-            val totalFromServer = response.totalBytesWhenPartial?.let { it + writtenBefore }
+            // `Content-Range`'s total is the length of the complete file, not of this range, so it is
+            // already the finished size and must not be increased by what the partial contributed.
+            val totalFromServer = response.totalBytesWhenPartial
                 ?: task.expectedBytes.takeIf { it > 0L }
                 ?: (writtenBefore + response.declaredContentLength.coerceAtLeast(0L)).takeIf {
                     response.declaredContentLength >= 0L

@@ -9,86 +9,87 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Hero Banner -->
         <include
             android:id="@+id/hero_banner"
-            layout="@layout/layout_hero_banner" />
+            layout="@layout/layout_hero_banner"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/banner_height"
+            android:layout_marginTop="4dp" />
 
-        <!-- Section Title: My Instances -->
+        <!-- Section title, with the create-instance action on the right. -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="18dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
-            <View
-                android:id="@+id/v_indicator"
-                android:layout_width="4dp"
-                android:layout_height="20dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/bg_indicator_bar" />
-
             <ImageView
                 android:id="@+id/btn_create_instance"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/empty_instances_sub"
-                android:padding="7dp"
-                android:src="@drawable/ic_plus" />
+                android:background="@drawable/bg_button_mc"
+                android:clickable="true"
+                android:contentDescription="@string/create_instance_title"
+                android:focusable="true"
+                android:padding="6dp"
+                android:src="@drawable/ic_plus"
+                android:tint="@color/mc_white" />
 
             <TextView
                 android:id="@+id/tv_section_instances"
-                android:layout_width="wrap_content"
+                style="@style/XCoreText.FieldLabel"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
                 android:layout_toStartOf="@id/btn_create_instance"
-                android:layout_toEndOf="@id/v_indicator"
-                android:fontFamily="monospace"
-                android:text="@string/nav_instances"
-                android:textColor="@color/xcore_text"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textColor="@color/mc_dim"
+                android:textSize="13sp"
+                android:text="@string/section_installations" />
         </RelativeLayout>
 
-        <!-- Instances List Container -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="@color/mc_line_soft" />
+
+        <!-- Rows are inflated from item_instance.xml into this container. -->
         <LinearLayout
             android:id="@+id/container_instances_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="4dp"
             android:orientation="vertical"
             android:paddingStart="16dp"
-            android:paddingEnd="16dp">
+            android:paddingEnd="16dp" />
 
-            <include layout="@layout/item_instance" />
-        </LinearLayout>
-
-        <!-- Empty State Container -->
         <LinearLayout
             android:id="@+id/container_empty_state"
             android:layout_width="match_parent"
             android:layout_height="220dp"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="24dp"
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="58dp"
                 android:layout_height="58dp"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_cube" />
+                android:src="@drawable/ic_cube"
+                android:tint="@color/xcore_accent" />
 
             <TextView
+                android:id="@+id/tv_empty_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:fontFamily="monospace"
+                android:fontFamily="sans-serif"
                 android:text="@string/empty_instances_title"
                 android:textColor="@color/xcore_text_muted"
                 android:textSize="15sp" />
@@ -97,12 +98,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:fontFamily="monospace"
+                android:fontFamily="sans-serif"
                 android:text="@string/empty_instances_sub"
                 android:textColor="@color/xcore_text_muted"
                 android:textSize="13sp" />
         </LinearLayout>
-
     </LinearLayout>
 
 </ScrollView>
