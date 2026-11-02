@@ -10,6 +10,7 @@
     <color name="mc_panel_raised">#3C3C3C</color>
     <color name="mc_line">#4B4B4B</color>
     <color name="mc_line_soft">#383838</color>
+    <color name="intro_scrim">#99000000</color>
     <color name="mc_white">#FFFFFF</color>
     <color name="mc_dim">#ABABAB</color>
     <color name="mc_dim_deep">#808080</color>
@@ -52,7 +53,6 @@
     <color name="xcore_accent_deep">@color/mc_green_deep</color>
     <color name="xcore_accent_soft">@color/mc_green_soft</color>
     <color name="xcore_accent_bright">@color/mc_green_bright</color>
-    <color name="xcore_accent_border">@color/mc_green_deep</color>
 
     <!--
       Per-screen hues. The launcher keeps one accent, so every screen resolves to the green
@@ -66,7 +66,6 @@
     <color name="xcore_violet">@color/mc_green</color>
     <color name="xcore_violet_deep">@color/mc_green_deep</color>
     <color name="xcore_violet_bright">@color/mc_green_bright</color>
-    <color name="xcore_violet_soft">@color/mc_green_soft</color>
 
     <color name="xcore_amber">@color/mc_amber</color>
     <color name="xcore_amber_deep">#A87622</color>
@@ -76,12 +75,10 @@
     <color name="xcore_teal">@color/mc_green</color>
     <color name="xcore_teal_deep">@color/mc_green_deep</color>
     <color name="xcore_teal_bright">@color/mc_green_bright</color>
-    <color name="xcore_teal_soft">@color/mc_green_soft</color>
 
     <color name="xcore_orange">@color/mc_amber</color>
     <color name="xcore_orange_deep">#A87622</color>
     <color name="xcore_orange_bright">#F0C46B</color>
-    <color name="xcore_orange_soft">#3A2E14</color>
 
     <color name="xcore_danger">@color/mc_red</color>
     <color name="xcore_danger_soft">#3A1A18</color>
@@ -92,18 +89,61 @@
     <color name="xcore_chip_error">@color/xcore_danger_soft</color>
 
     <color name="xcore_scrim_start">#F2141414</color>
-    <color name="xcore_scrim_mid">#A6141414</color>
     <color name="xcore_scrim_end">#1A141414</color>
 
     <!-- Home screen: surfaces sit on top of the wallpaper, so they carry their own alpha. -->
-    <color name="xcore_home_scrim_top">#B3141414</color>
-    <color name="xcore_home_scrim_mid">#4D141414</color>
-    <color name="xcore_home_scrim_bottom">#E6141414</color>
-    <color name="xcore_home_surface">#E61E1E1E</color>
-    <color name="xcore_home_surface_deep">#F21A1A1A</color>
-    <color name="xcore_home_border">@color/mc_line</color>
 
     <!-- Switch states on the settings rows. -->
-    <color name="xcore_switch_off">#3C3C3C</color>
-    <color name="xcore_thumb_off">#A0A0A0</color>
+
+    <!--
+      Bevels for the block-style surfaces. A Minecraft GUI panel is drawn edge by edge rather than
+      with a shadow, so the light and dark rims are their own colours.
+    -->
+    <color name="mc_bevel_light">#6E6E6E</color>
+    <color name="mc_bevel_dark">#101010</color>
+    <color name="mc_bevel_gloss">#4DFFFFFF</color>
+    <color name="mc_bevel_shadow">#000000</color>
+    <color name="mc_tile">#E6202020</color>
+    <color name="mc_tile_border">#585858</color>
+
+    <!-- Washes laid over a texture so it reads as grain rather than as a picture. -->
+
+    <!--
+        Settings owns two tones of its own. The rest of the launcher is grass, dirt and stone grain;
+        the options screen is flat and dark so a section band is the only thing competing for
+        attention. Nothing here is used outside the settings layouts.
+    -->
+    <color name="mc_settings_bg">#141414</color>
+    <color name="mc_settings_band">#1F1F1F</color>
+    <color name="mc_settings_rule">#2C2C2C</color>
+
+    <!--
+        One accent per settings tab. The launcher as a whole is green; the options screen is the one
+        place where nine panels have to be told apart at a glance, so each carries its own hue and
+        paints its section keyline with it.
+    -->
+    <color name="sec_java">#66C244</color>
+    <color name="sec_memory">#4FA3D9</color>
+    <color name="sec_resolution">#5FD4CF</color>
+    <color name="sec_renderer">#B07BE0</color>
+    <color name="sec_arguments">#E6953F</color>
+    <color name="sec_storage">#D9C24A</color>
+    <color name="sec_appearance">#E06FA0</color>
+    <color name="sec_account">#7B9FE0</color>
+    <color name="sec_about">#B3B3B3</color>
+
+    <!--
+        The first-run sign-in is the one light surface in the launcher: the classic desktop dialog was
+        a grey plaque over dirt, with white wells for the fields.
+    -->
+    <color name="login_plaque">#A5A5A5</color>
+    <color name="login_plaque_light">#C8C8C8</color>
+    <color name="login_plaque_edge">#3A3A3A</color>
+    <color name="login_field">#FFFFFF</color>
+    <color name="login_field_edge">#000000</color>
+    <color name="login_field_shadow">#5A5A5A</color>
+    <color name="login_button">#9E9E9E</color>
+    <color name="login_button_down">#8A8A8A</color>
+    <color name="login_text">#1F1F1F</color>
+    <color name="login_link">#2F5FD0</color>
 </resources>

@@ -61,6 +61,7 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":services"))
     implementation(project(":runtime"))
+    implementation(project(":graphics"))
 
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.core.ktx)

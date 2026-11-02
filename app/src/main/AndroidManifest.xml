@@ -4,6 +4,15 @@
     <!-- Version metadata, libraries, assets and the client jar all come from Mojang's endpoints. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!--
+        The install notice. FOREGROUND_SERVICE and its dataSync type are what Android 14 demands of a
+        service that outlives the screen; POST_NOTIFICATIONS is the runtime ask on API 33 and above.
+        Without it the install still runs - only the notice stays hidden.
+    -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:name=".XCoreApplication"
         android:allowBackup="false"
@@ -26,6 +35,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--
+            Reports the running game install as an ongoing notice. It reports only: the transfer
+            itself belongs to the launcher's install use case, and this service is stopped by the
+            verdict that transfer returns.
+        -->
+        <service
+            android:name=".XCoreInstallService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
     </application>
 
 </manifest>

@@ -43,6 +43,7 @@ import studio.xycore.xcore.domain.XCoreRepositories
 import studio.xycore.xcore.domain.XCoreRepositoryDownloadJournal
 import studio.xycore.xcore.domain.XCoreRuntimeUseCases
 import studio.xycore.xcore.domain.XCoreVersionUseCases
+import studio.xycore.xcore.graphics.XCoreGraphicsManager
 import studio.xycore.xcore.runtime.XCoreDeviceFacts
 import studio.xycore.xcore.runtime.XCoreRuntimeManager
 import studio.xycore.xcore.runtime.XCoreRuntimeModule
@@ -138,7 +139,19 @@ class XCoreGraph(context: Context) {
         journal = XCoreRepositoryDownloadJournal(repositories),
     )
 
-    val instances: XCoreInstanceUseCases = XCoreInstanceUseCases(        repositories = repositories,
+    /**
+     * The graphics bridge: what this device's GPU actually offers, whether a window surface can be
+     * presented to it, and which native entry points a real renderer would need.
+     *
+     * Construction reads nothing - the first measurement happens when the renderer panel asks for it,
+     * which is the only moment a user wants to know. It is a single instance because the EGL display,
+     * the surface generation counter and the loaded-library set are process state; two managers would
+     * each have their own answer to "what is loaded".
+     */
+    val graphics: XCoreGraphicsManager = XCoreGraphicsManager(appContext, deviceFacts, logger)
+
+    val instances: XCoreInstanceUseCases = XCoreInstanceUseCases(
+        repositories = repositories,
         paths = paths,
         services = services,
         events = events,

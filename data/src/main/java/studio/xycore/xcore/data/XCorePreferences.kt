@@ -121,9 +121,10 @@ class XCorePreferences private constructor(
     suspend fun lastLaunchMillis(): Long? = currentPreferences()[KEY_LAST_LAUNCH_MILLIS]
 
     /**
-     * The three interface choices the settings screen owns: language tag, theme tag and whether the
-     * launcher animates. They are app-level rather than engine configuration because the engine reads
-     * none of them; a value only becomes meaningful once the resources it names exist.
+     * The interface choices the settings screen owns: language tag, theme tag, whether the launcher
+     * animates, and the offline profile the first-run sign-in writes. They are app-level rather than
+     * engine configuration because the engine reads none of them; a value only becomes meaningful
+     * once the resources it names exist.
      */
     val uiSettings: Flow<XCoreUiSettings> = dataStore.data.map { preferences ->
         decodeUi(preferences)
@@ -139,6 +140,9 @@ class XCorePreferences private constructor(
             preferences[KEY_UI_LANGUAGE] = settings.language
             preferences[KEY_UI_THEME] = settings.theme
             preferences[KEY_UI_ANIMATIONS] = settings.animationsEnabled
+            preferences[KEY_UI_PROFILE_NAME] = settings.profileName
+            preferences[KEY_UI_KEEP_PROFILE] = settings.keepProfileSignedIn
+            preferences[KEY_UI_PROFILE_CREDENTIAL] = settings.profileCredential
         }
     }
 
@@ -149,6 +153,9 @@ class XCorePreferences private constructor(
         language = preferences[KEY_UI_LANGUAGE] ?: XCoreUiSettings.LANGUAGE_DEFAULT,
         theme = preferences[KEY_UI_THEME] ?: XCoreUiSettings.THEME_DEFAULT,
         animationsEnabled = preferences[KEY_UI_ANIMATIONS] != false,
+        profileName = preferences[KEY_UI_PROFILE_NAME].orEmpty(),
+        keepProfileSignedIn = preferences[KEY_UI_KEEP_PROFILE] == true,
+        profileCredential = preferences[KEY_UI_PROFILE_CREDENTIAL].orEmpty(),
     )
 
     private fun decode(preferences: Preferences): XCoreResult<XCoreConfig> {
@@ -270,6 +277,9 @@ class XCorePreferences private constructor(
         private val KEY_UI_LANGUAGE = stringPreferencesKey("ui.language")
         private val KEY_UI_THEME = stringPreferencesKey("ui.theme")
         private val KEY_UI_ANIMATIONS = booleanPreferencesKey("ui.animationsEnabled")
+        private val KEY_UI_PROFILE_NAME = stringPreferencesKey("ui.profileName")
+        private val KEY_UI_KEEP_PROFILE = booleanPreferencesKey("ui.keepProfileSignedIn")
+        private val KEY_UI_PROFILE_CREDENTIAL = stringPreferencesKey("ui.profileCredential")
 
         private val CONFIG_KEYS: List<Preferences.Key<*>> = listOf(
             KEY_ENVIRONMENT,
@@ -317,6 +327,16 @@ data class XCoreUiSettings(
     val language: String = LANGUAGE_DEFAULT,
     val theme: String = THEME_DEFAULT,
     val animationsEnabled: Boolean = true,
+    /** The offline profile written by the first-run sign-in; blank until one is chosen. */
+    val profileName: String = "",
+    /** Whether that profile survives a restart, or the sign-in is asked for again. */
+    val keepProfileSignedIn: Boolean = false,
+    /**
+     * `salt$sha256(salt + password)` for the profile password, written once at sign-in. The
+     * password itself never reaches this store; only the digest does, so a stolen datastore file
+     * still has to be brute-forced. Blank until a password has been set.
+     */
+    val profileCredential: String = "",
 ) {
     companion object {
         const val LANGUAGE_DEFAULT = "en"
