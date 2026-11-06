@@ -3,7 +3,9 @@ package studio.xycore.xcore
 import android.app.Application
 import android.content.Context
 import android.content.pm.ApplicationInfo
+import android.os.Build
 import android.util.Log
+import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -11,6 +13,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import studio.xycore.xcore.auth.XCoreAccountRepository
+import studio.xycore.xcore.auth.XCoreAndroidKeyStoreCipher
+import studio.xycore.xcore.auth.XCoreAuthConfig
+import studio.xycore.xcore.auth.XCoreAuthManager
+import studio.xycore.xcore.auth.XCoreAuthModule
+import studio.xycore.xcore.auth.XCoreEntitlementChecker
+import studio.xycore.xcore.auth.XCoreHttpAuthTransport
+import studio.xycore.xcore.auth.XCoreMicrosoftAuth
+import studio.xycore.xcore.auth.XCoreSessionProvider
+import studio.xycore.xcore.auth.XCoreTokenStore
 import studio.xycore.xcore.core.XCoreConfig
 import studio.xycore.xcore.core.XCoreEngine
 import studio.xycore.xcore.core.XCoreEngineReport
@@ -150,6 +162,42 @@ class XCoreGraph(context: Context) {
      */
     val graphics: XCoreGraphicsManager = XCoreGraphicsManager(appContext, deviceFacts, logger)
 
+    /**
+     * The sign-in subsystem: a Microsoft device-code flow over an encrypted account vault.
+     *
+     * [authConfig] carries whatever app registration was supplied at build time, and an empty one is
+     * left empty rather than borrowed, so a build without a registration reports "not configured"
+     * instead of signing into someone else's tenant. The vault file lives in the app's private
+     * internal storage and its key never leaves the Android Keystore, so the bytes copied out of this
+     * directory are unreadable elsewhere.
+     */
+    val authConfig: XCoreAuthConfig = XCoreAuthConfig(
+        clientId = studio.xycore.xcore.auth.BuildConfig.MICROSOFT_CLIENT_ID,
+    )
+
+    val accountVault: XCoreTokenStore = XCoreTokenStore(
+        file = File(appContext.filesDir, XCoreTokenStore.FILE_NAME),
+        cipher = XCoreAndroidKeyStoreCipher(appContext),
+        logger = logger,
+    )
+
+    val accounts: XCoreAccountRepository = XCoreAccountRepository(accountVault, logger)
+
+    val microsoftAuth: XCoreMicrosoftAuth = XCoreMicrosoftAuth(
+        config = authConfig,
+        transport = XCoreHttpAuthTransport(userAgent = userAgent(), logger = logger),
+        logger = logger,
+    )
+
+    /** The session provider the launch pipeline asks for a credential; see `auth/README.md`. */
+    val auth: XCoreAuthManager = XCoreAuthManager(
+        config = authConfig,
+        auth = microsoftAuth,
+        accounts = accounts,
+        entitlements = XCoreEntitlementChecker(microsoftAuth),
+        logger = logger,
+    )
+
     val instances: XCoreInstanceUseCases = XCoreInstanceUseCases(
         repositories = repositories,
         paths = paths,
@@ -204,7 +252,7 @@ class XCoreGraph(context: Context) {
             database = database,
             repositories = repositories,
             logger = logger,
-            extraModules = listOf(XCoreRuntimeModule(runtimeEngine)),
+            extraModules = listOf(XCoreRuntimeModule(runtimeEngine), XCoreAuthModule(auth, authConfig)),
         ),
     )
 
@@ -232,6 +280,17 @@ class XCoreGraph(context: Context) {
     }
 
     fun storageLayout(): XCoreStorageLayout? = services.find(XCoreStorageLayout::class)
+
+    /** The installed session provider, or `null` while no registration-backed auth module is up. */
+    fun sessionProvider(): XCoreSessionProvider? = services.find(XCoreSessionProvider::class)
+
+    /** Identifies this client to Microsoft; carries the app version because the service logs it. */
+    private fun userAgent(): String {
+        val version = runCatching {
+            appContext.packageManager.getPackageInfo(appContext.packageName, 0).versionName
+        }.getOrNull().orEmpty().ifBlank { "unknown" }
+        return "XCoreLauncher/$version Android/API${Build.VERSION.SDK_INT}"
+    }
 
     fun capabilityReport(): XCoreCapabilityReport = XCoreReadinessModule.report(services)
 

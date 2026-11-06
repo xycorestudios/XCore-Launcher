@@ -42,7 +42,7 @@ enum class XCoreCapability(
     VERSION_INDEX(XCoreServiceIds.VERSION_INDEX, "Version manifest reader", "Phase 2", true),
     DOWNLOAD_ENGINE(XCoreServiceIds.DOWNLOAD_ENGINE, "Download engine", "Phase 2", true),
     RUNTIME_PROVISIONER(XCoreServiceIds.RUNTIME_PROVISIONER, "Java runtime provisioner", "Phase 3", true),
-    AUTHENTICATION(XCoreServiceIds.AUTHENTICATION, "Microsoft / Mojang authentication", "Phase 4", false),
+    AUTHENTICATION(XCoreServiceIds.AUTHENTICATION, "Microsoft authentication", "Phase 5", false),
     NATIVE_BRIDGE(XCoreServiceIds.NATIVE_BRIDGE, "Native bridge (JNI bootstrap)", "Phase 5", false),
     GRAPHICS_SURFACE(XCoreServiceIds.GRAPHICS_SURFACE, "EGL / GLFW graphics surface", "Phase 5", false),
     LAUNCH_PIPELINE(XCoreServiceIds.LAUNCH_PIPELINE, "Launch pipeline", "Phase 6", false),

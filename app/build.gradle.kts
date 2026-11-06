@@ -60,6 +60,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
     implementation(project(":services"))
+    implementation(project(":auth"))
     implementation(project(":runtime"))
     implementation(project(":graphics"))
 

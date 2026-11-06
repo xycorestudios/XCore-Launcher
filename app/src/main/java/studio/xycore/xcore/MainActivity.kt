@@ -1,6 +1,8 @@
 package studio.xycore.xcore
 
 import android.app.Dialog
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -81,6 +83,9 @@ import studio.xycore.xcore.runtime.XCoreRuntimeSource
 import studio.xycore.xcore.ui.XCoreMotion
 import studio.xycore.xcore.versions.XCoreManifestEntry
 import studio.xycore.xcore.versions.XCoreVersionListing
+import studio.xycore.xcore.auth.XCoreAccountSummary
+import studio.xycore.xcore.auth.XCoreAuthStatus
+import studio.xycore.xcore.auth.XCoreSignInPrompt
 
 /**
  * The landscape launcher shell.
@@ -172,6 +177,14 @@ class MainActivity : ComponentActivity() {
     )
     private var settingsCategory = SettingsCategory.RUNTIME
     private var uiSettings = XCoreUiSettings()
+
+    /**
+     * The last read of the account vault, or `null` before the first read lands.
+     *
+     * Nothing in it is a credential: [XCoreAuthStatus] carries names, ids and the public half of a
+     * waiting device code, which is why a screen may hold on to it.
+     */
+    private var authStatus: XCoreAuthStatus? = null
 
     /** One runtime fetch at a time; the transfer listener writes into a panel row. */
     private var runtimeInstallRunning = false
@@ -305,6 +318,7 @@ class MainActivity : ComponentActivity() {
         bindLogsScreen()
         bindControlsScreen()
         loadUiSettings()
+        refreshAuthStatus()
         showIntro()
 
         bindSettingsCategories()
@@ -345,6 +359,17 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         refreshInstances()
+    }
+
+    /**
+     * The manifest declares orientation among this activity's handled config changes, so a rotation
+     * arrives here instead of rebuilding the shell. Only the rail reacts: a portrait window is the
+     * same wide layout with less width, so it goes back to the icon strip.
+     */
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT && !railCollapsed) setRailCollapsed(true)
+        if (tab == LauncherTab.SETTINGS) renderSettings()
     }
 
     // ---------------------------------------------------------------- instances
@@ -564,7 +589,7 @@ class MainActivity : ComponentActivity() {
             getString(R.string.home_update_news) to "Mojang version manifest",
             getString(R.string.home_update_settings) to "${uiSettings.language} · ${uiSettings.theme}",
             getString(R.string.home_update_launch) to gapFor(XCoreCapability.LAUNCH_PIPELINE),
-            getString(R.string.home_update_microsoft) to gapFor(XCoreCapability.AUTHENTICATION),
+            getString(R.string.home_update_microsoft) to microsoftStateLabel(),
             getString(R.string.home_update_skins) to gapFor(XCoreCapability.AUTHENTICATION),
             getString(R.string.home_update_controls) to gapFor(XCoreCapability.NATIVE_BRIDGE),
         ).forEach { (feature, status) ->
@@ -731,7 +756,7 @@ class MainActivity : ComponentActivity() {
         showInfo(
             title = getString(R.string.login_need_account),
             rows = listOf(
-                getString(R.string.login_help_service) to gapFor(XCoreCapability.AUTHENTICATION),
+                getString(R.string.login_help_service) to microsoftStateLabel(),
                 getString(R.string.login_help_profile) to uiSettings.profileName.ifBlank { "-" },
                 "Password" to (if (uiSettings.profileCredential.isBlank()) "not set" else "stored as a digest on this device"),
                 getString(R.string.login_help_kept) to
@@ -912,8 +937,10 @@ class MainActivity : ComponentActivity() {
     }
 
     /** The rail's width, or a strip of icons when the player folds it. */
-    private fun collapseRail() {
-        railCollapsed = !railCollapsed
+    private fun collapseRail() = setRailCollapsed(!railCollapsed)
+
+    private fun setRailCollapsed(collapsed: Boolean) {
+        railCollapsed = collapsed
         val params = sidebar.layoutParams as LinearLayout.LayoutParams
         params.width = dp(if (railCollapsed) 52 else 212)
         sidebar.layoutParams = params
@@ -923,10 +950,18 @@ class MainActivity : ComponentActivity() {
         }
         accountNameRail.visibility = if (railCollapsed) View.GONE else View.VISIBLE
         findViewById<View>(R.id.btn_rail_collapse)?.apply {
-            rotation = if (railCollapsed) 270f else 90f
+            // The chevron points at the edge the rail leaves through, so a right-hand rail flips it.
+            val folded = if (railOnRight()) 90f else 270f
+            val unfolded = if (railOnRight()) 270f else 90f
+            rotation = if (railCollapsed) folded else unfolded
             contentDescription = getString(if (railCollapsed) R.string.rail_expand else R.string.rail_collapse)
         }
     }
+
+    /** Whether the navigation rail is currently anchored to the trailing edge. */
+    private fun railOnRight(): Boolean = shell().indexOfChild(sidebar) > 0
+
+    private fun shell(): LinearLayout = findViewById(R.id.shell)
 
     private fun applyLiveProgress(completed: Int, total: Int, bytesDone: Long, bytesTotal: Long, label: String) {
         val featured = instances.firstOrNull { instance -> instance.id == selectedId } ?: return
@@ -1172,16 +1207,37 @@ class MainActivity : ComponentActivity() {
                     title = "Preflight failed",
                     rows = listOf("error" to (outcome.errorOrNull()?.format() ?: "unknown")),
                 )
-            } else {
-                showInfo(
-                    title = if (report.ready) "Ready to launch" else "Blocked",
-                    rows = report.checks.map { check ->
-                        "${if (check.passed) "+ " else "- "}${check.label}" to check.detail
+                return@run
+            }
+            // The session line comes from the provider the launch pipeline would use, so the screen
+            // cannot claim a player a launch could not actually get. Reading it touches the vault only.
+            val provider = graph.sessionProvider()
+            if (provider == null) {
+                showPreflight(report, "no session provider is installed; this build has no Microsoft registration")
+                return@run
+            }
+            graph.run({ provider.holdsSession() }) { held ->
+                val problem = held.errorOrNull()
+                showPreflight(
+                    report,
+                    when {
+                        problem != null -> "the account vault could not be read: ${playerText(problem.format())}"
+                        held.valueOrNull() == true -> "an account is signed in; a launch would ask the provider for its credential"
+                        else -> "no account is signed in on this device"
                     },
-                    note = "This is the preflight only. The launch pipeline itself is not added yet, so no process was started.",
                 )
             }
         }
+    }
+
+    private fun showPreflight(report: XCorePreflightReport, sessionLine: String) {
+        showInfo(
+            title = if (report.ready) "Ready to launch" else "Blocked",
+            rows = report.checks.map { check ->
+                "${if (check.passed) "+ " else "- "}${check.label}" to check.detail
+            } + ("session" to sessionLine),
+            note = "This is the preflight only. The launch pipeline itself is not added yet, so no process was started.",
+        )
     }
 
     // ---------------------------------------------------------------- home band
@@ -1192,12 +1248,236 @@ class MainActivity : ComponentActivity() {
             rows = listOf(
                 "Profile" to uiSettings.profileName.ifBlank { "-" },
                 "Kept on this device" to if (uiSettings.keepProfileSignedIn) getString(R.string.login_yes) else getString(R.string.login_no),
-                "Microsoft / Mojang" to gapFor(XCoreCapability.AUTHENTICATION),
-                "Effect" to "Nothing can be launched as a named player until it lands.",
+            ) + authStatusRow(),
+            note = "The name and its password are checked against this device only. Microsoft sign-in is the row above it, and it reads the account vault rather than asserting anything.",
+            actions = listOf(
+                "Microsoft" to { showMicrosoftAccount() },
+                getString(R.string.action_close) to { },
             ),
-            note = "The name and its password are checked against this device only. Authentication with Mojang or Microsoft is its own capability; this build does not fake a logged-in player.",
         )
     }
+
+    /** One line that says what Microsoft sign-in currently is, or the reason it is not. */
+    private fun authStatusRow(): List<Pair<String, String>> {
+        val status = authStatus ?: return listOf("Microsoft" to "reading the vault")
+        return listOf("Microsoft" to if (!status.configured) {
+            "needs an app registration"
+        } else {
+            status.activeAccount?.displayName ?: "not signed in"
+        })
+    }
+
+    // ---------------------------------------------------------------- microsoft sign-in
+
+    /**
+     * Reads the account vault and repaints whatever is showing.
+     *
+     * The status is a snapshot, not a subscription: the launcher only needs it when a screen opens,
+     * after an action, and once at start-up, and a stale read is reported by the row that asked for it
+     * rather than by a background poll.
+     */
+    private fun refreshAuthStatus(onPaint: () -> Unit = {}) {
+        graph.run({ graph.auth.status() }) { outcome ->
+            authStatus = outcome.valueOrNull()
+            outcome.errorOrNull()?.let { problem ->
+                graph.logger.log(XCoreLogLevel.WARN, XCoreLogTags.AUTH, "status read failed: ${problem.detail}")
+            }
+            onPaint()
+            if (tab == LauncherTab.SETTINGS) renderSettings()
+        }
+    }
+
+    /**
+     * The account sheet: what the vault holds, and only the actions that can actually run.
+     *
+     * With no app registration compiled in there is nothing to sign in to, so the sheet reports that
+     * and offers a re-read instead of a button that would fail on the first request.
+     */
+    private fun showMicrosoftAccount() {
+        val status = authStatus
+        if (status == null) {
+            refreshAuthStatus { showMicrosoftAccount() }
+            return
+        }
+        val rows = status.rows()
+        if (!status.configured) {
+            showInfo(
+                title = "Microsoft sign-in",
+                rows = rows,
+                note = "This build carries no Microsoft app registration, so a sign-in would fail at the first request. " +
+                    "auth/README.md documents what has to be supplied at build time. Nothing else on this screen depends on it.",
+                actions = listOf(
+                    "Check again" to { refreshAuthStatus { showMicrosoftAccount() } },
+                    getString(R.string.action_close) to { },
+                ),
+            )
+            return
+        }
+        val options = mutableListOf<Pair<String, () -> Unit>>()
+        if (status.awaitingApproval != null) {
+            options += "Show the code that is waiting" to { beginMicrosoftSignIn() }
+        }
+        options += (if (status.signedIn) "Add another account" else "Sign in with Microsoft") to { beginMicrosoftSignIn() }
+        if (status.accounts.size > 1) {
+            options += "Switch which account launches" to { chooseMicrosoftAccount(status) }
+        }
+        if (status.signedIn) {
+            options += "Check the licence again" to { recheckMicrosoftOwnership() }
+            options += "Sign out" to { confirmMicrosoftSignOut() }
+        }
+        showChoice(
+            title = "Microsoft account",
+            note = "Tokens live in the vault this device's keystore protects; the launcher can show the names below but not the secrets.",
+            options = options,
+        )
+    }
+
+    /**
+     * Asks Microsoft for a device code and shows the plaque that redeems it.
+     *
+     * A challenge already waiting in the vault is resumed rather than replaced, so reopening this
+     * sheet does not orphan a code the player is halfway through typing into a browser.
+     */
+    private fun beginMicrosoftSignIn() {
+        graph.run({ graph.auth.beginSignIn() }) { outcome ->
+            val prompt = outcome.valueOrNull()
+            if (prompt == null) {
+                showInfo(
+                    title = "Sign-in could not start",
+                    rows = listOf("error" to playerText(outcome.errorOrNull()?.format() ?: "unknown")),
+                    note = "No challenge was handed out, so there is nothing to approve and nothing was stored.",
+                )
+                refreshAuthStatus()
+                return@run
+            }
+            showDeviceCode(prompt)
+        }
+    }
+
+    private fun showDeviceCode(prompt: XCoreSignInPrompt) {
+        val minutes = prompt.secondsRemainingAt(System.currentTimeMillis()) / 60
+        showInfo(
+            title = "Sign in with Microsoft",
+            rows = listOf(
+                "your code" to prompt.userCode,
+                "open this page" to prompt.verificationUri,
+                "code expires in" to "$minutes min",
+            ),
+            note = prompt.instructions + " The launcher never sees your password: you type the code into Microsoft's own page, " +
+                "and this app only asks whether it has been approved yet.",
+            actions = listOf(
+                "Wait for approval" to { awaitMicrosoftSignIn() },
+                "Cancel" to { cancelMicrosoftSignIn() },
+            ),
+        )
+    }
+
+    /**
+     * Polls until the code is approved, refused or aged out.
+     *
+     * The waits belong to the manager and honour the interval Microsoft asks for, so this call can
+     * sit for minutes; the plaque has already gone, and the toast is the only thing the player sees
+     * while it runs.
+     */
+    private fun awaitMicrosoftSignIn() {
+        notify("Waiting for the code to be approved")
+        graph.run({ graph.auth.completeSignIn() }) { outcome ->
+            val account = outcome.valueOrNull()
+            if (account == null) {
+                showInfo(
+                    title = "Sign-in did not complete",
+                    rows = listOf("reason" to playerText(outcome.errorOrNull()?.format() ?: "unknown")),
+                    note = "Nothing was stored. Starting over asks Microsoft for a new code.",
+                    actions = listOf("Try again" to { beginMicrosoftSignIn() }, getString(R.string.action_close) to { }),
+                )
+                refreshAuthStatus()
+                return@run
+            }
+            notify("Signed in as ${account.displayName}")
+            refreshAuthStatus()
+        }
+    }
+
+    private fun cancelMicrosoftSignIn() {
+        graph.run({ graph.auth.cancelSignIn("cancelled from the launcher") }) { outcome ->
+            outcome.errorOrNull()?.let { problem ->
+                showInfo(title = "Could not discard the code", rows = listOf("error" to playerText(problem.format())))
+            }
+            refreshAuthStatus()
+        }
+    }
+
+    private fun chooseMicrosoftAccount(status: XCoreAuthStatus) {
+        showChoice(
+            title = "Which account launches",
+            note = "The chosen account is the one a launch asks the session provider for; the others stay in the vault.",
+            options = status.accounts.map { account ->
+                accountSummaryLine(account) to {
+                    graph.run({ graph.auth.selectAccount(account.id) }) { outcome ->
+                        outcome.errorOrNull()?.let { problem ->
+                            showInfo(title = "That account was not selected", rows = listOf("error" to playerText(problem.format())))
+                        }
+                        notify("Launching as ${outcome.valueOrNull()?.displayName ?: account.displayName}")
+                        refreshAuthStatus()
+                    }
+                }
+            },
+        )
+    }
+
+    private fun recheckMicrosoftOwnership() {
+        notify("Asking Microsoft what this account owns")
+        graph.run({ graph.auth.recheckOwnership() }) { outcome ->
+            val verdict = outcome.valueOrNull()
+            if (verdict == null) {
+                showInfo(
+                    title = "Ownership could not be re-checked",
+                    rows = listOf("error" to playerText(outcome.errorOrNull()?.format() ?: "unknown")),
+                    note = "The account keeps whatever the vault already recorded; a failed check does not change it.",
+                )
+                return@run
+            }
+            showInfo(
+                title = if (verdict.ownsJavaEdition) "Java Edition confirmed" else "Not confirmed",
+                rows = listOf("what the answer rests on" to verdict.basis.name.lowercase(), "detail" to verdict.detail),
+                note = "The verdict is stored with the account, so the next launch is told before it starts anything.",
+            )
+            refreshAuthStatus()
+        }
+    }
+
+    private fun confirmMicrosoftSignOut() {
+        val active = authStatus?.activeAccount
+        showInfo(
+            title = "Sign out of Microsoft",
+            rows = listOf("account" to (active?.displayName ?: "-"), "what happens" to "the vault entry is erased on this device"),
+            note = "Signing out erases the tokens; the offline profile name stays, because it is a separate choice.",
+            actions = listOf(
+                "Sign out" to {
+                    graph.run({ graph.auth.signOut(active?.id) }) { outcome ->
+                        outcome.errorOrNull()?.let { problem ->
+                            showInfo(title = "Sign-out failed", rows = listOf("error" to playerText(problem.format())))
+                            return@run
+                        }
+                        notify("Signed out")
+                        refreshAuthStatus()
+                    }
+                },
+                getString(R.string.action_close) to { },
+            ),
+        )
+    }
+
+    /** How the launcher words the Microsoft row when a screen has no status read yet. */
+    private fun microsoftStateLabel(): String {
+        val status = authStatus ?: return "reading the vault"
+        if (!status.configured) return "needs an app registration"
+        val active = status.activeAccount ?: return "not signed in"
+        return active.displayName
+    }
+
+    private fun accountSummaryLine(account: XCoreAccountSummary): String =
+        "${account.displayName} · ${if (account.ownsJavaEdition) "Java Edition held" else "licence not confirmed"}"
 
     /**
      * The bottom bar's version card is a dropdown, not a plaque: it opens under the card and lists
@@ -3137,6 +3417,20 @@ class MainActivity : ComponentActivity() {
             switchTo = uiSettings.animationsEnabled,
             onToggle = { enabled -> setAnimationsEnabled(enabled) },
         )
+        addRow(
+            container,
+            R.drawable.ic_monitor,
+            getString(R.string.row_screen_orientation_title),
+            getString(R.string.row_screen_orientation_sub),
+            value = orientationLabel(uiSettings.orientation),
+        ) { chooseOrientation() }
+        addRow(
+            container,
+            R.drawable.ic_layers,
+            getString(R.string.row_rail_side_title),
+            getString(R.string.row_rail_side_sub),
+            value = railSideLabel(uiSettings.railSide),
+        ) { chooseRailSide() }
 
         addSection(container, R.drawable.ic_gear, R.string.settings_sec_engine, getString(R.string.choice_log_level_note))
         val config = graph.config.value
@@ -3219,6 +3513,7 @@ class MainActivity : ComponentActivity() {
                 title = getString(R.string.row_orientation_title),
                 rows = listOf(
                     "orientation" to orientationLabel,
+                    "locked to" to orientationLabel(uiSettings.orientation),
                     "window" to "${metrics.widthPixels} × ${metrics.heightPixels} px",
                     "smallest width" to "${resources.configuration.smallestScreenWidthDp} dp",
                 ),
@@ -3233,9 +3528,9 @@ class MainActivity : ComponentActivity() {
             container,
             R.drawable.ic_person,
             getString(R.string.row_account_title),
-            getString(R.string.account_signed_out),
-            value = gapFor(XCoreCapability.AUTHENTICATION),
-        ) { showAccount() }
+            getString(R.string.row_account_sub),
+            value = microsoftStateLabel(),
+        ) { showMicrosoftAccount() }
 
         addSection(container, R.drawable.ic_shield, R.string.settings_sec_terms, getString(R.string.settings_sec_terms_note))
         val expected = settingsCategory
@@ -3264,24 +3559,45 @@ class MainActivity : ComponentActivity() {
             R.string.settings_sec_gaps,
             getString(R.string.settings_sec_gaps_note),
         )
-        listOf(XCoreCapability.AUTHENTICATION, XCoreCapability.LAUNCH_PIPELINE).forEach { capability ->
+        // Driven by the catalog instead of a fixed list, so a capability drops out of this section the
+        // moment its module actually comes up rather than when someone remembers to edit the screen.
+        val installed = graph.capabilityReport().installedServiceIds
+        listOf(XCoreCapability.AUTHENTICATION, XCoreCapability.LAUNCH_PIPELINE)
+            .filter { capability -> capability.serviceId !in installed }
+            .forEach { capability ->
             addRow(
                 container,
                 R.drawable.ic_shield,
                 capability.displayName,
                 capability.serviceId,
-                value = gapFor(capability),
+                value = gapWordFor(capability),
             ) {
                 showInfo(
                     title = capability.displayName,
                     rows = listOf(
                         "service" to capability.serviceId,
-                        "gap" to gapFor(capability),
-                        "implemented" to capability.implemented.toString(),
+                        "gap" to gapWordFor(capability),
+                        "in the service catalog" to (capability.serviceId in installed).toString(),
                     ),
-                    note = playerText(capability.notImplementedError().format()),
+                    note = gapExplanation(capability),
                 )
             }
+        }
+
+        // Listed as a gap rather than as a switch: there is no second interface in this build, so a
+        // row under "Launcher look and motion" would promise a choice that does nothing.
+        addRow(
+            container,
+            R.drawable.ic_palette,
+            getString(R.string.row_official_uxui_title),
+            getString(R.string.row_official_uxui_sub),
+            value = getString(R.string.gap_not_added),
+        ) {
+            showInfo(
+                title = getString(R.string.row_official_uxui_title),
+                rows = listOf("in this build" to getString(R.string.gap_not_added)),
+                note = getString(R.string.row_official_uxui_note),
+            )
         }
     }
 
@@ -4120,6 +4436,8 @@ class MainActivity : ComponentActivity() {
             outcome.valueOrNull()?.let { stored ->
                 uiSettings = stored
                 XCoreMotion.enabled = stored.animationsEnabled
+                applyOrientationChoice()
+                applyRailSide()
                 gateOnSignIn(stored)
             }
             if (tab == LauncherTab.SETTINGS) renderSettings()
@@ -4143,6 +4461,112 @@ class MainActivity : ComponentActivity() {
             notify(if (enabled) "Animations on" else "Animations off")
         }
     }
+
+    /**
+     * Persists an appearance choice and applies it only once the store has accepted it, so the drawn
+     * launcher and the stored value cannot disagree.
+     */
+    private fun saveUiSettings(next: XCoreUiSettings, applied: String, apply: () -> Unit) {
+        graph.run({ graph.preferences.setUiSettings(next) }) { outcome ->
+            outcome.errorOrNull()?.let { problem ->
+                renderSettings()
+                showInfo(
+                    title = "Could not store that choice",
+                    rows = listOf("error" to playerText(problem.format())),
+                    note = "The launcher keeps the choice it had, so nothing on screen changed either.",
+                )
+                return@run
+            }
+            uiSettings = next
+            apply()
+            if (tab == LauncherTab.SETTINGS) renderSettings()
+            notify(applied)
+        }
+    }
+
+    private fun chooseOrientation() {
+        showChoice(
+            title = getString(R.string.row_screen_orientation_title),
+            note = getString(R.string.choice_screen_orientation_note),
+            options = orientationOptions().map { (label, tag) -> label to { setOrientation(tag) } },
+        )
+    }
+
+    private fun setOrientation(tag: String) {
+        saveUiSettings(uiSettings.copy(orientation = tag), "Orientation: ${orientationLabel(tag)}") {
+            applyOrientationChoice()
+        }
+    }
+
+    private fun chooseRailSide() {
+        showChoice(
+            title = getString(R.string.row_rail_side_title),
+            note = getString(R.string.choice_rail_side_note),
+            options = railSideOptions().map { (label, tag) -> label to { setRailSide(tag) } },
+        )
+    }
+
+    private fun setRailSide(side: String) {
+        saveUiSettings(uiSettings.copy(railSide = side), "Rail: ${railSideLabel(side)}") { applyRailSide() }
+    }
+
+    /**
+     * Locks the window to the chosen edge, or hands it back to the device.
+     *
+     * Portrait is not a second layout: the shell was drawn for a wide window, so the pane keeps its
+     * panels and loses width. The rail folds to its icon strip to give some of that back, and the
+     * chevron opens it again.
+     */
+    private fun applyOrientationChoice() {
+        requestedOrientation = when (uiSettings.orientation) {
+            XCoreUiSettings.ORIENTATION_PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            XCoreUiSettings.ORIENTATION_LANDSCAPE -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        }
+        if (uiSettings.orientation == XCoreUiSettings.ORIENTATION_PORTRAIT && !railCollapsed) setRailCollapsed(true)
+    }
+
+    /**
+     * Moves the rail and its divider to the edge the setting names.
+     *
+     * The two views are reordered rather than the shell's `layoutDirection` flipped, because a
+     * right-to-left shell mirrors the text of every screen inside it, not just the menu.
+     */
+    private fun applyRailSide() {
+        val shell = shell()
+        val divider = findViewById<View>(R.id.rail_divider) ?: return
+        val wantRight = uiSettings.railSide == XCoreUiSettings.RAIL_SIDE_RIGHT
+        if (wantRight == railOnRight()) return
+        shell.removeView(divider)
+        shell.removeView(sidebar)
+        if (wantRight) {
+            shell.addView(divider)
+            shell.addView(sidebar)
+        } else {
+            shell.addView(sidebar, 0)
+            shell.addView(divider, 1)
+        }
+        // The chevron points toward the edge the rail folds into, so it has to be repainted.
+        setRailCollapsed(railCollapsed)
+    }
+
+    private fun orientationOptions(): List<Pair<String, String>> = listOf(
+        "System" to XCoreUiSettings.ORIENTATION_SYSTEM,
+        "Portrait" to XCoreUiSettings.ORIENTATION_PORTRAIT,
+        "Landscape" to XCoreUiSettings.ORIENTATION_LANDSCAPE,
+    )
+
+    private fun railSideOptions(): List<Pair<String, String>> = listOf(
+        "Left" to XCoreUiSettings.RAIL_SIDE_LEFT,
+        "Right" to XCoreUiSettings.RAIL_SIDE_RIGHT,
+    )
+
+    /** A stored tag shown as the player would name it; the value the shell was given wins. */
+    private fun orientationLabel(tag: String): String =
+        orientationOptions().firstOrNull { it.second == tag }?.first ?: tag
+
+    private fun railSideLabel(tag: String): String =
+        railSideOptions().firstOrNull { it.second == tag }?.first ?: tag
 
     private fun chooseLanguage() {
         showChoice(
@@ -4568,6 +4992,24 @@ class MainActivity : ComponentActivity() {
      */
     private fun gapFor(capability: XCoreCapability): String =
         getString(if (capability.implemented) R.string.gap_soon else R.string.gap_not_added)
+
+    /**
+     * How the launcher names a gap the player can actually close.
+     *
+     * Sign-in is the one whose code ships in this APK and only waits on a Microsoft app registration
+     * compiled in at build time; calling that "not added" would tell the player the launcher has
+     * nothing here, which is not the truth of it.
+     */
+    private fun gapWordFor(capability: XCoreCapability): String =
+        if (capability == XCoreCapability.AUTHENTICATION) "needs an app registration" else gapFor(capability)
+
+    private fun gapExplanation(capability: XCoreCapability): String = when (capability) {
+        XCoreCapability.AUTHENTICATION ->
+            "The device-code flow, the encrypted vault and the ownership check are in this build; what it lacks " +
+                "is an Entra app registration supplied at build time, which is what the account row above reports. " +
+                "auth/README.md lists what to provide."
+        else -> playerText(capability.notImplementedError().format())
+    }
 
     /** Strips the phase numbering the domain puts in its messages before any of it reaches a screen. */
     private fun playerText(text: String): String = text

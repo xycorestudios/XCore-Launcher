@@ -28,7 +28,6 @@
     <string name="tag_java_edition">Java Edition</string>
     <string name="banner_title">Minecraft</string>
     <string name="section_my_instances">My Instances</string>
-    <string name="account_signed_out">No account</string>
 
     <!-- Instance -->
     <string name="instance_title_default">Vanilla</string>
@@ -79,6 +78,15 @@
     <string name="row_theme_sub">Palette the launcher draws with</string>
     <string name="row_animations_title">Animations</string>
     <string name="row_animations_sub">Screen, dialog and press motion</string>
+    <string name="row_screen_orientation_title">Screen orientation</string>
+    <string name="row_screen_orientation_sub">Portrait, landscape, or whatever the device allows</string>
+    <string name="row_rail_side_title">Navigation rail side</string>
+    <string name="row_rail_side_sub">Which edge the launcher puts its menu on</string>
+    <string name="row_official_uxui_title">X-core Launcher Official UX/UI</string>
+    <string name="row_official_uxui_sub">The alternate launcher interface, listed because it is not built</string>
+    <string name="row_official_uxui_note">This build draws the launcher one way: the navigation rail, the Play page and the settings screen. A second official interface is not compiled in, so there is nothing to switch to and this row only reports that. The working layout choices live under Launcher look and motion.</string>
+    <string name="choice_screen_orientation_note">Applied as soon as you choose. The layout was drawn for landscape, so a portrait window keeps the same panels and simply has less width for them; the rail folds to icons so the page keeps what it can.</string>
+    <string name="choice_rail_side_note">Applied as soon as you choose, and read back on the next launch. Only the menu and its divider move; the text beside them is not mirrored.</string>
     <string name="row_runtime_channel_title">Runtime source</string>
     <string name="row_runtime_channel_sub">Where the Java runtime is taken from</string>
     <string name="row_verified_runtime_title">Verified runtime only</string>
@@ -253,7 +261,7 @@
     <string name="settings_sec_arg_lines_note">The launcher splits these into arguments itself; the model refuses a newline.</string>
     <string name="settings_sec_root_note">The root changes on the next launch: the storage layout is prepared when the engine starts, and reloadConfig does not rebuild it.</string>
     <string name="settings_sec_dirs_note">Each was probed writable when the layout was prepared. A directory that could not be proven is absent rather than listed hopefully.</string>
-    <string name="settings_sec_player_note">Authentication is not added yet. Until it lands the launcher holds no player, so no sign-in control is offered here.</string>
+    <string name="settings_sec_player_note">The row below reads the account vault on this device and says what it finds, including the reason sign-in cannot run when the build carries no app registration.</string>
     <string name="settings_sec_terms_note">The acknowledgement gates the version download; it is stored as a row, not as a checkbox that forgets itself.</string>
     <string name="settings_sec_build_note">Read from the installed package and the running engine, not from constants copied into a layout.</string>
 
@@ -296,6 +304,7 @@
     <string name="row_ram_title">Physical memory</string>
     <string name="row_ram_sub">Half of this is the ceiling the heap decision will honour</string>
     <string name="row_account_title">Player account</string>
+    <string name="row_account_sub">Microsoft sign-in and the account vault on this device</string>
     <string name="settings_state_broken">broken</string>
     <string name="settings_value_auto">automatic</string>
     <string name="settings_empty_detected">No runtime tree has been measured on this device yet. The scan looks under the launcher\'s own runtimes directory; it does not count a desktop JDK that is not there.</string>
@@ -404,9 +413,9 @@
     <string name="row_density_sub">Dots per inch bucket reported by the system</string>
     <string name="row_font_scale_title">Font scale</string>
     <string name="row_font_scale_sub">The user font multiplier from system settings</string>
-    <string name="row_orientation_title">Orientation</string>
-    <string name="row_orientation_sub">What the activity is currently drawing in</string>
-    <string name="metrics_dialog_note">Read from Resources.displayMetrics and configuration; the launcher does not override either.</string>
+    <string name="row_orientation_title">Current orientation</string>
+    <string name="row_orientation_sub">What this window is drawn in right now</string>
+    <string name="metrics_dialog_note">Read from Resources.displayMetrics and configuration for the window as Android presents it. The orientation a launch is locked to is chosen under Launcher look and motion.</string>
 
     <string name="settings_sec_gaps">What is not wired yet</string>
     <string name="settings_sec_gaps_note">Listed so the screen does not imply a capability this build does not have.</string>
@@ -433,7 +442,7 @@
     <string name="login_help_service">Sign-in service</string>
     <string name="login_help_profile">Profile in use</string>
     <string name="login_help_kept">Kept after a restart</string>
-    <string name="login_help_note">The name you type here is the one the launcher passes to the game as auth_player_name. The password stays on this device as a salted digest: there is no account endpoint in this build.</string>
+    <string name="login_help_note">The name you type here is the one the launcher passes to the game as auth_player_name. The password stays on this device as a salted digest. Microsoft sign-in is a separate thing, in the Account settings; this build carries no app registration, so it has no endpoint to talk to.</string>
     <string name="login_yes">yes</string>
     <string name="login_no">no</string>
 

@@ -116,11 +116,12 @@ class XCoreServiceRegistry(
     override fun contribute(
         id: String,
         instance: Any,
+        type: KClass<out Any>,
         priority: Int,
         replace: Boolean,
     ): XCoreResult<Unit> = register(
         instance = instance,
-        type = instance::class,
+        type = type,
         id = id,
         priority = priority,
         replace = replace,

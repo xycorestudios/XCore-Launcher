@@ -52,9 +52,17 @@ inline fun <reified T : Any> XCoreServiceLocator.requireService(): XCoreResult<T
  */
 interface XCoreServiceCatalog : XCoreServiceLocator {
 
+    /**
+     * Publishes [instance] under [id].
+     *
+     * [type] is what consumers look it up by and defaults to the instance's own class. A module
+     * whose implementation satisfies a contract declared in a lower layer names that contract here,
+     * so a consumer can ask for the interface without importing the implementation class.
+     */
     fun contribute(
         id: String,
         instance: Any,
+        type: KClass<out Any> = instance::class,
         priority: Int = 0,
         replace: Boolean = false,
     ): XCoreResult<Unit>

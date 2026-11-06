@@ -473,7 +473,7 @@ class XCoreEngine(
             XCoreServiceIds.STORAGE_LAYOUT -> "Phase 1"
             XCoreServiceIds.VERSION_INDEX -> "Phase 2"
             XCoreServiceIds.DOWNLOAD_ENGINE -> "Phase 2"
-            XCoreServiceIds.AUTHENTICATION -> "Phase 4"
+            XCoreServiceIds.AUTHENTICATION -> "Phase 5"
             XCoreServiceIds.RUNTIME_PROVISIONER -> "Phase 3"
             XCoreServiceIds.NATIVE_BRIDGE -> "Phase 5"
             XCoreServiceIds.GRAPHICS_SURFACE -> "Phase 5"

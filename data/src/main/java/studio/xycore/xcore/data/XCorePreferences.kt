@@ -143,6 +143,8 @@ class XCorePreferences private constructor(
             preferences[KEY_UI_PROFILE_NAME] = settings.profileName
             preferences[KEY_UI_KEEP_PROFILE] = settings.keepProfileSignedIn
             preferences[KEY_UI_PROFILE_CREDENTIAL] = settings.profileCredential
+            preferences[KEY_UI_ORIENTATION] = settings.orientation
+            preferences[KEY_UI_RAIL_SIDE] = settings.railSide
         }
     }
 
@@ -156,6 +158,8 @@ class XCorePreferences private constructor(
         profileName = preferences[KEY_UI_PROFILE_NAME].orEmpty(),
         keepProfileSignedIn = preferences[KEY_UI_KEEP_PROFILE] == true,
         profileCredential = preferences[KEY_UI_PROFILE_CREDENTIAL].orEmpty(),
+        orientation = preferences[KEY_UI_ORIENTATION] ?: XCoreUiSettings.ORIENTATION_DEFAULT,
+        railSide = preferences[KEY_UI_RAIL_SIDE] ?: XCoreUiSettings.RAIL_SIDE_DEFAULT,
     )
 
     private fun decode(preferences: Preferences): XCoreResult<XCoreConfig> {
@@ -280,6 +284,8 @@ class XCorePreferences private constructor(
         private val KEY_UI_PROFILE_NAME = stringPreferencesKey("ui.profileName")
         private val KEY_UI_KEEP_PROFILE = booleanPreferencesKey("ui.keepProfileSignedIn")
         private val KEY_UI_PROFILE_CREDENTIAL = stringPreferencesKey("ui.profileCredential")
+        private val KEY_UI_ORIENTATION = stringPreferencesKey("ui.orientation")
+        private val KEY_UI_RAIL_SIDE = stringPreferencesKey("ui.railSide")
 
         private val CONFIG_KEYS: List<Preferences.Key<*>> = listOf(
             KEY_ENVIRONMENT,
@@ -337,9 +343,32 @@ data class XCoreUiSettings(
      * still has to be brute-forced. Blank until a password has been set.
      */
     val profileCredential: String = "",
+    /**
+     * Which way the activity may rotate: `system`, `portrait` or `landscape`. A tag rather than a
+     * screen-orientation constant because the stored value must keep meaning the same thing after
+     * the platform's int values change.
+     */
+    val orientation: String = ORIENTATION_DEFAULT,
+    /** Which edge the navigation rail is anchored to: `left` or `right`. */
+    val railSide: String = RAIL_SIDE_DEFAULT,
 ) {
     companion object {
         const val LANGUAGE_DEFAULT = "en"
         const val THEME_DEFAULT = "dark"
+
+        const val ORIENTATION_SYSTEM = "system"
+        const val ORIENTATION_PORTRAIT = "portrait"
+        const val ORIENTATION_LANDSCAPE = "landscape"
+
+        /** Landscape, because that is what the manifest pins and the shell was drawn for. */
+        const val ORIENTATION_DEFAULT = ORIENTATION_LANDSCAPE
+
+        const val RAIL_SIDE_LEFT = "left"
+        const val RAIL_SIDE_RIGHT = "right"
+        const val RAIL_SIDE_DEFAULT = RAIL_SIDE_LEFT
+
+        /** The tags this build accepts; anything else is read back as the default. */
+        val ORIENTATION_CHOICES: List<String> = listOf(ORIENTATION_SYSTEM, ORIENTATION_PORTRAIT, ORIENTATION_LANDSCAPE)
+        val RAIL_SIDE_CHOICES: List<String> = listOf(RAIL_SIDE_LEFT, RAIL_SIDE_RIGHT)
     }
 }

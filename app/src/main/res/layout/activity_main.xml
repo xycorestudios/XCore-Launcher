@@ -172,7 +172,9 @@
                 android:layout_height="42dp" />
         </LinearLayout>
 
+        <!-- Named because the rail-side setting moves this divider with the rail. -->
         <View
+            android:id="@+id/rail_divider"
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="@color/mc_line_soft" />
